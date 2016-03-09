@@ -3,28 +3,25 @@
 
 #include <string>
 #include <vector>
+#include "SurfaceCoefficients.h"
 
 class AnalyticSolution
 {
-public:
+ public:
   AnalyticSolution (const double thermal_conductivity_ =    1.2,
 		    const double thermal_capacity_     =  840.0,
 		    const double density_              = 1960.0,
 		    const std::string surface_type_    = "soil",
-		    const bool validation_             = false
-		    // const double thermal_conductivity_,
-		    // 		    const double thermal_capacity_,
-		    // 		    const double density_,
-		    // 		    const std::string surface_type_,
-		    // 		    const bool validation_
-		    );
+		    const bool heat_source_            = false,
+		    const bool validation_             = false,
+		    const int type_of_weather_         = 1);
   double get_value (const double depth,
 		    const double time,
-		    int iterations);
-
-  double get_integral_value(const double time,
-			    int iterations);
-
+		    int iterations = 5000);
+  
+  double get_integral_value (const double time,
+			     int iterations);
+  
   double get_analytic_solar_radiation   (const double time);
   double get_analytic_air_temperature   (const double time);
   double get_analytic_wind_speed        (/*const double time*/);
@@ -41,7 +38,7 @@ public:
 			 std::vector< std::vector<double> > &matrix,
 			 std::vector<double> &right_hand_side);
   
-private:  
+ private:  
   double roots_BcotB     (const double initial_value,
 			  const double constant);
   
@@ -61,18 +58,20 @@ private:
   double thermal_conductivity; // soil thermal conductivity (W/mK)
   double thermal_capacity;     // soil heat capacity (J/kg)
   double density;              // soil density (kg/m3)
-  double thermal_diffusivity;   // soil thermal diffusivity (m2/s)
+  double thermal_diffusivity;  // soil thermal diffusivity (m2/s)
   std::string surface_type;    // type of surface required
+  bool heat_source;
   bool validation;
-
+  int type_of_weather;
+  
   double pi;
   double phi;   // period for radiation and ambient temperature functions (1/s)
   double theta; // period for annual variation (1/s)
-
+  
   double Rsummer_ave;
   double Rwinter_ave;
   double Rannual_ave;
-
+  
   double Rsummer_daily_average;
   double Rwinter_daily_average;
   

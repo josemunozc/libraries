@@ -1,90 +1,133 @@
-#include "/home/zerpiko/Dropbox/PhD/libraries/AnalyticSolution.h"
-#include "/home/zerpiko/Dropbox/PhD/libraries/SurfaceCoefficients.h"
+#include "AnalyticSolution.h"
+//#include "SurfaceCoefficients.h"
 #include <math.h>
 #include <stdio.h>
-//#include <vector>
 
 AnalyticSolution::AnalyticSolution (const double thermal_conductivity_,
 				    const double thermal_capacity_,
 				    const double density_,
 				    const std::string surface_type_,
-				    const bool validation_
-				    // const double thermal_conductivity_ =    1.2,
-				    // const double thermal_capacity_     =  840.0,
-				    // const double density_              = 1960.0,
-				    // const std::string surface_type_    = "soil",
-				    // const bool validation_             = false
-				    )
+				    const bool heat_source_,
+				    const bool validation_,
+				    const int type_of_weather_)
 {
-  // surface_type (surface_type_),
-  // validation   (validation_)
-
   surface_type = surface_type_;
+  heat_source  = heat_source_;
   validation   = validation_;
+  type_of_weather = type_of_weather_;
 
   pi    = 3.14159265359;            // (dimensionless)
   phi   = 2.*pi/(24.*3600.);        // (1/s)
   theta = 2.*pi/(24.*3600.*365.25); // (1/s)
 
-  if (!validation)
+  if (validation==false)
     {
       thermal_conductivity = thermal_conductivity_; // (W/mK)
       thermal_capacity     = thermal_capacity_;     // (J/kgK)
       density              = density_;              // (kg/m3)
       thermal_diffusivity  = (thermal_conductivity/
 			      (density*thermal_capacity)); // (m2/s)
-      
-      Rsummer_daily_average = 204.23; // average of june     and july    monthly-daily averages 1985-2004 (W/m2)
-      Rwinter_daily_average =  21.31; // average of december and january monthly-daily averages 1985-2004 (W/m2)
-      Tave_ann    =  9.52;    // 20 years (1month average) // (C)
-      Tamp_summer = 5.54/2.;  // monthly-daily averages 1985-2004 (C)
-      Tamp_winter = 8.37/2.;  // monthly-daily averages 1985-2004 (C)
-      Tave_summer = 15.44;    // monthly-daily averages 1985-2004 (C)
-      Tave_winter =  3.60;    // monthly-daily averages 1985-2004 (C)
+      /*
+	There are 4 sets of weathers that we can implement in the analytical expressions.
+	Type 1 - Mild - 20-year-historical UK weather based on data from the UK Meteorological Office
+	Type 2 - Mild - 2006 UK weather based on data from TRL experimental site at Toddington UK
+	Type 3 - Cold - 2005 Iceland weather based on data from the Icelanding Meteorological Office
+	Type 4 - Hot  - 2009 South-Mexican weather based on data from UADY Meteorological Station
+      */
+      if (type_of_weather==1)
+	{
+	  Rsummer_daily_average = 204.23; // average of june     and july    monthly-daily averages 1985-2004 (W/m2)
+	  Rwinter_daily_average =  21.31; // average of december and january monthly-daily averages 1985-2004 (W/m2)
+	  Tave_ann    =  9.52;    // 20 years (1month average) // (C)
+	  Tamp_summer = 5.54/2.;  // monthly-daily averages 1985-2004 (C)
+	  Tamp_winter = 8.37/2.;  // monthly-daily averages 1985-2004 (C)
+	  Tave_summer = 15.44;    // monthly-daily averages 1985-2004 (C)
+	  Tave_winter =  3.60;    // monthly-daily averages 1985-2004 (C)
+	}
+      else if (type_of_weather==2)
+	{
+	  Rsummer_daily_average = 241.51; //A
+	  Rwinter_daily_average =  19.64; //B
+	  Tave_ann    = 10.73;   //-----
+	  Tamp_summer =  9.78; //E
+	  Tamp_winter =  6.28; //F
+	  Tave_summer = 18.41;  //C
+	  Tave_winter =  6.35;  //D
+	}
+      else if (type_of_weather==3)
+	{
+	  Rsummer_daily_average = 218.34; //A
+	  Rwinter_daily_average =   1.56; //B
+	  Tave_ann    =  5.11; //-----
+	  Tamp_summer =  4.95; //E
+	  Tamp_winter =  9.80; //F
+	  Tave_summer = 11.15; //C
+	  Tave_winter = -0.20; //D
+	}
+      else if (type_of_weather==4)
+	{
+	  Rsummer_daily_average = 260.76; //A
+	  Rwinter_daily_average = 167.80; //B
+	  Tave_ann    = 27.39; //-----
+	  Tamp_summer =  8.20; //E
+	  Tamp_winter =  9.60; //F
+	  Tave_summer = 29.90; //C
+	  Tave_winter = 24.70; //D
+	}
+      else
+	{
+	  std::cout << "Error. Value out of range. Weather type.\n";
+	  throw 1;
+	}
     }
   else
     {
-      thermal_conductivity = 1;
-      thermal_capacity     = 800;
-      density              = 2000;
+      thermal_conductivity = 1.;
+      thermal_capacity     = 800.;
+      density              = 2000.;
       thermal_diffusivity  = (thermal_conductivity/
 			      (density*thermal_capacity));
-
-      Rsummer_daily_average = 250;
-      Rwinter_daily_average =  20;
+      
+      Rsummer_daily_average = 250.;
+      Rwinter_daily_average =  20.;
       Tave_ann    =  9.8;
       Tamp_summer =  2.5;
       Tamp_winter =  5.;
       Tave_summer = 16.;
       Tave_winter =  3.60;
     }
-  RadiationConstantA = (Rsummer_daily_average-Rwinter_daily_average)/2; // (W/m2)
-  RadiationConstantB = (Rsummer_daily_average+Rwinter_daily_average)/2; // (W/m2)
+  RadiationConstantA = (Rsummer_daily_average-Rwinter_daily_average)/2.; // (W/m2)
+  RadiationConstantB = (Rsummer_daily_average+Rwinter_daily_average)/2.; // (W/m2)
   RadiationConstantC = (2.*pi)/(3.*pi+4.);                              // (dimensionless)
   RadiationConstantD = (4.-pi)/(2.*pi);                                 // (dimensionless)
-  Rave_factor        = (3*pi+4)/4.;                                     // (dimensionless)
+  Rave_factor        = (3.*pi+4.)/4.;                                     // (dimensionless)
   Tamp_amp    = 0.5*(Tamp_summer - Tamp_winter); // (C)
   Tave_amp    = 0.5*(Tamp_summer + Tamp_winter); // (C)
   Tamp_ave    = 0.5*(Tave_summer - Tave_winter); // (C)
   Tave_ave    = 0.5*(Tave_summer + Tave_winter); // (C)
   
-  air_temperature_correction_factor = 1;
+  air_temperature_correction_factor = 1.;
 }
 
-double AnalyticSolution::get_value (const double depth,
+double AnalyticSolution::get_value (const double depth, // position in the domain, must be positive
 				    const double time,
-				    int iterations = 2500)
+				    int iterations)
 {
+  if (depth<0.)
+    {
+      std::cout << "Error, position in the domain must be positive." << std::endl;
+      throw 1;
+    }
   double domain_lenght;        // (m)
   double initial_temperature;  // (C)
   double average_soil_surface_temperature; // (C)
   
   if (!validation)
     {
-      domain_lenght       = 20.;
+      domain_lenght       = 50.;
       initial_temperature = 10.9;
       //average_soil_surface_temperature = 8.234946;
-      average_soil_surface_temperature = 9.604456;  // <<-- using emissivity with cloud factor
+      average_soil_surface_temperature = 8.237301470/*9.604456*/;  // <<-- using emissivity with cloud factor
     }
   else
     {
@@ -96,67 +139,65 @@ double AnalyticSolution::get_value (const double depth,
   
   double relative_humidity = get_analytic_relative_humidity (/*const double time*/);
   double wind_speed        = get_analytic_wind_speed        (/*const double time*/);
-   
-  //Jansson coefficients
+  
   SurfaceCoefficients surface_coefficients;
+  double sky_emissivity = 
+    surface_coefficients
+    .get_sky_emissivity("Jansson",
+			Tave_ann,
+			relative_humidity);
+  double sky_temperature = 
+    pow(sky_emissivity,0.25)*(Tave_ann+273.15);
+  
+  //Jansson coefficients
   double absortivity                     =  surface_coefficients // (dimensionless)
     .get_absortivity_Jansson(surface_type);
   
   double outbound_convective_coefficient = surface_coefficients  // (W/m2K)
     .get_convective_coefficient_Jansson(surface_type,
 					wind_speed)  
-    + surface_coefficients
-    .get_infrared_coefficient_Jansson(surface_type,
-				      Tave_ann,
-				      relative_humidity,
-				      Tave_ann,
-				      average_soil_surface_temperature);
+    + (4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+       * surface_coefficients
+       .get_infrared_outbound_coefficient_Jansson(surface_type));
+  
   double inbound_convective_coefficient  = surface_coefficients  //(W/m2K)
     .get_convective_coefficient_Jansson(surface_type,
 					wind_speed)  
-    + (surface_coefficients
-       .get_infrared_coefficient_Jansson(surface_type,
-					 Tave_ann,
-					 relative_humidity,
-					 Tave_ann,
-					 average_soil_surface_temperature)
-       * pow( (surface_coefficients.get_infrared_inbound_coefficient_Jansson( surface_type,
-									      relative_humidity,
-									      Tave_ann)
-	       / surface_coefficients.get_infrared_outbound_coefficient_Jansson (surface_type)),0.25));
-  
+    + (4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+       * surface_coefficients
+       .get_infrared_outbound_coefficient_Jansson(surface_type)
+       * pow(sky_emissivity,0.25));
   
   double evaporative_heat_flux  =  surface_coefficients          // (W/m2)
     .get_evaporative_flux_Jansson(surface_type,
 				  Tave_ann,
-				  wind_speed,
 				  relative_humidity,
-				  average_soil_surface_temperature); // (W/m2)
-
-  double infrared_error = surface_coefficients
-    .get_infrared_coefficient_Jansson(surface_type,
-				      Tave_ann,
-				      relative_humidity,
-				      Tave_ann,
-				      average_soil_surface_temperature)
-    * 273.15 * (1-pow( (surface_coefficients.get_infrared_inbound_coefficient_Jansson( surface_type,
-										       relative_humidity,
-										       Tave_ann)
-			/ surface_coefficients.get_infrared_outbound_coefficient_Jansson (surface_type)),0.25));
+				  wind_speed,
+				  average_soil_surface_temperature,
+				  0.,
+				  false); // (W/m2)
+  double infrared_error = 
+    4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+    * surface_coefficients
+    .get_infrared_outbound_coefficient_Jansson(surface_type)
+    * 273.15*(pow(sky_emissivity,0.25)-1.);
   
   double H1 = outbound_convective_coefficient/thermal_conductivity; // (1/m)
   double hi = inbound_convective_coefficient;                       // (W/m2K)  
   //--------------------------------------------------------------------------
-  double Soil_Temperature = 0; // initialization of the temperature variable
-  double beta_m = 0;           // eigenvalues used in the analytical solution
+  double Soil_Temperature = 0.; // initialization of the temperature variable
+  double beta_m = 0.;           // eigenvalues used in the analytical solution
   
-  double kernel_const = 0;
-  double kernel_X     = 0;
-  double kernel_0     = 0;
-  double kernel_L_int = 0;
+  double kernel_const = 0.;
+  double kernel_X     = 0.;
+  double kernel_0     = 0.;
+  double kernel_L_int = 0.;
   
-  double C0 = 0;
-  double C1 = 0;
+  double C0 = 0.;
+  double C1 = 0.;
+
+  double kernel_a     = 0.;
+  double a = 2.;
   
   if (iterations<=0)
     {
@@ -169,37 +210,52 @@ double AnalyticSolution::get_value (const double depth,
       beta_m = (roots_BtanB(beta_m*domain_lenght,H1*domain_lenght)/
 		domain_lenght);                                     // (1/m)
       
-      kernel_const = sqrt(2 * (pow(H1,2) + pow(beta_m,2))/(H1 + domain_lenght*(pow(H1,2) + pow(beta_m,2)))); // (1/m^0.5)
-      kernel_X     = kernel_const * cos(beta_m*(domain_lenght-depth));                                    // (1/m^0.5)
-      kernel_0     = kernel_const * cos(beta_m*domain_lenght);                                            // (1/m^0.5)
-      kernel_L_int = kernel_const * sin(beta_m*domain_lenght) * (1/beta_m);                               // (m^0.5)
+      kernel_const = sqrt(2. * (pow(H1,2.) + pow(beta_m,2.))
+			  /(H1 + domain_lenght*(pow(H1,2.) + pow(beta_m,2.)))); // (1/m^0.5)
+      kernel_X     = kernel_const * cos(beta_m*(domain_lenght-depth));          // (1/m^0.5)
+      kernel_0     = kernel_const * cos(beta_m*domain_lenght);                  // (1/m^0.5)
+      kernel_L_int = kernel_const * sin(beta_m*domain_lenght) * (1./beta_m);    // (m^0.5)
+      kernel_a     = kernel_const * cos(beta_m*(domain_lenght-a));              // (1/m^0.5)
       
       C0 = thermal_diffusivity*pow(beta_m,2); // (1/s)
       C1 = exp(-C0*time);       // (dimensionless)
       
-      Soil_Temperature = Soil_Temperature
-        + kernel_X * kernel_L_int * C1 * initial_temperature                            // this line corresponds to the initial condition (C)
-        + kernel_X * kernel_0 * (thermal_diffusivity/thermal_conductivity) *            // the following lines correspond to the b.c. at x=0 (m2C/Ws)
+      Soil_Temperature += 
+        + kernel_X * kernel_L_int * C1 * initial_temperature                 // this line corresponds to the initial condition (C)
+        + kernel_X * kernel_0 * (thermal_diffusivity/thermal_conductivity) * // the following lines correspond to the b.c. at x=0 (m2C/Ws)
 	(air_temperature_correction_factor * 
-	 (int_exp_cos_0_t  (-0.50*hi*Tamp_amp,C0,  phi - theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_cos_0_t(-0.50*hi*Tamp_amp,C0,  phi + theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_sin_0_t( 0.25*hi*Tamp_amp,C0,  phi - theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_sin_0_t(-0.25*hi*Tamp_amp,C0,  phi + theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_cos_0_t(-1.00*hi*Tave_amp,C0,  phi        ,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_cos_0_t( 1.00*hi*Tamp_ave,C0,        theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + int_exp_sin_0_t( 0.50*hi*Tamp_ave,C0,        theta,time)//this line corresponds to the ambient temperature (Ws/m2)
-	  + Tave_ave*hi*(1/C0)*(1-C1))                               //this line corresponds to the ambient temperature (Ws/m2)
-	 + absortivity*Rave_factor*RadiationConstantC*
-	 (int_exp_cos_0_t  ( 0.25*RadiationConstantA,C0,2*phi + theta,time)   //this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t( 0.25*RadiationConstantA,C0,2*phi - theta,time)   //this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,  phi + theta,time)   //this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,  phi - theta,time)   //this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t( 0.50*RadiationConstantA*(1+2*RadiationConstantD),C0,        theta,time)//this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t( 0.50*RadiationConstantB,C0,2*phi        ,time)   //this line corresponds to radiation (Ws/m2)
-	  + int_exp_cos_0_t(     -RadiationConstantB,C0,  phi        ,time)   //this line corresponds to radiation (Ws/m2)
-	  + 0.50*RadiationConstantB*(1 + 2*RadiationConstantD)*(1/C0)*(1-C1)) //this line corresponds to radiation  (Ws/m2)
-	 + (evaporative_heat_flux-infrared_error)*(1/C0)*(1-C1)                                //this line corresponds to evaporation (Ws/m2)
+	 (int_exp_cos_0_t  (-0.50*hi*Tamp_amp,C0,phi - theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_cos_0_t(-0.50*hi*Tamp_amp,C0,phi + theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_sin_0_t( 0.25*hi*Tamp_amp,C0,phi - theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_sin_0_t(-0.25*hi*Tamp_amp,C0,phi + theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_cos_0_t(-1.00*hi*Tave_amp,C0,phi        ,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_cos_0_t( 1.00*hi*Tamp_ave,C0,      theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + int_exp_sin_0_t( 0.50*hi*Tamp_ave,C0,      theta,time)//this line corresponds to the ambient temperature (Ws/m2)
+	  + Tave_ave*hi*(1./C0)*(1.-C1))                          //this line corresponds to the ambient temperature (Ws/m2)
+	 + absortivity*Rave_factor*RadiationConstantC*                         //this line corresponds to radiation
+	 (int_exp_cos_0_t  ( 0.25*RadiationConstantA,C0,2.*phi + theta,time)   //this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t( 0.25*RadiationConstantA,C0,2.*phi - theta,time)   //this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,   phi + theta,time)   //this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,   phi - theta,time)   //this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t( 0.50*RadiationConstantA*(1.+2.*RadiationConstantD),C0,theta,time)//this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t( 0.50*RadiationConstantB,C0,2.*phi        ,time)   //this line corresponds to radiation (Ws/m2)
+	  + int_exp_cos_0_t(     -RadiationConstantB,C0,   phi        ,time)   //this line corresponds to radiation (Ws/m2)
+	  + 0.50*RadiationConstantB*(1. + 2.*RadiationConstantD)*(1./C0)*(1.-C1)) //this line corresponds to radiation  (Ws/m2)
+	 + (evaporative_heat_flux+infrared_error)*(1./C0)*(1.-C1)               //this line corresponds to evaporation (Ws/m2)
 	 );
+      
+      if (heat_source)
+	Soil_Temperature +=
+	  kernel_X * kernel_a * (thermal_diffusivity/thermal_conductivity) * 0.1 *
+	  absortivity*Rave_factor*RadiationConstantC*                               //this line corresponds to heat source
+	  (int_exp_cos_0_t  ( 0.25*RadiationConstantA,C0,2.*phi + theta,time)       //this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t( 0.25*RadiationConstantA,C0,2.*phi - theta,time)       //this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,   phi + theta,time)       //this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t(-0.50*RadiationConstantA,C0,   phi - theta,time)       //this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t( 0.50*RadiationConstantA*(1.+2.*RadiationConstantD),C0,theta,time)//this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t( 0.50*RadiationConstantB,C0,2.*phi        ,time)       //this line corresponds to heat source (Ws/m2)
+	   + int_exp_cos_0_t(     -RadiationConstantB,C0,   phi        ,time)       //this line corresponds to heat source (Ws/m2)
+	   + 0.50*RadiationConstantB*(1. + 2.*RadiationConstantD)*(1./C0)*(1.-C1)); //this line corresponds to heat source  (Ws/m2)
     }
   return (Soil_Temperature);
 }
@@ -225,53 +281,53 @@ double AnalyticSolution::get_integral_value(const double time,
       //average_soil_surface_temperature = 8.903705;
       average_soil_surface_temperature = 10.12734; // <<-- using emissivity with cloud factor
     }
-
+  
   double relative_humidity = get_analytic_relative_humidity (/*const double time*/);
   double wind_speed        = get_analytic_wind_speed        (/*const double time*/);
+
+  SurfaceCoefficients surface_coefficients;
+  double sky_emissivity = 
+    surface_coefficients
+    .get_sky_emissivity("Jansson",
+			Tave_ann,
+			relative_humidity);
+  double sky_temperature = 
+    pow(sky_emissivity,0.25)*(Tave_ann+273.15);
   
   //Jansson coefficients
-  SurfaceCoefficients surface_coefficients;
-  double absortivity                     = surface_coefficients  // (dimensionless)
+  double absortivity                     =  surface_coefficients // (dimensionless)
     .get_absortivity_Jansson(surface_type);
+  
   double outbound_convective_coefficient = surface_coefficients  // (W/m2K)
     .get_convective_coefficient_Jansson(surface_type,
 					wind_speed)  
-    + surface_coefficients
-    .get_infrared_coefficient_Jansson(surface_type,
-				      Tave_ann,
-				      relative_humidity,
-				      Tave_ann,
-				      average_soil_surface_temperature);
-  double inbound_convective_coefficient  = surface_coefficients  // (W/m2K)
+    + (4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+       * surface_coefficients
+       .get_infrared_outbound_coefficient_Jansson(surface_type));
+  
+  double inbound_convective_coefficient  = surface_coefficients  //(W/m2K)
     .get_convective_coefficient_Jansson(surface_type,
 					wind_speed)  
-    + (surface_coefficients
-       .get_infrared_coefficient_Jansson(surface_type,
-					 Tave_ann,
-					 relative_humidity,
-					 Tave_ann,
-					 average_soil_surface_temperature)
-       * pow( (surface_coefficients.get_infrared_inbound_coefficient_Jansson( surface_type,
-									      relative_humidity,
-									      Tave_ann)
-	       / surface_coefficients.get_infrared_outbound_coefficient_Jansson (surface_type)),0.25));
-  double evaporative_heat_flux = surface_coefficients // (W/m2)
-    .get_evaporative_flux_Jansson (surface_type,
-				   Tave_ann,
-				   wind_speed,
-				   relative_humidity,
-				   average_soil_surface_temperature); // (W/m2)
-  double infrared_error = surface_coefficients
-    .get_infrared_coefficient_Jansson(surface_type,
-				      Tave_ann,
-				      relative_humidity,
-				      Tave_ann,
-				      average_soil_surface_temperature)
-    * 273.15 * (1-pow( (surface_coefficients.get_infrared_inbound_coefficient_Jansson( surface_type,
-										       relative_humidity,
-										       Tave_ann)
-			/ surface_coefficients.get_infrared_outbound_coefficient_Jansson (surface_type)),0.25)); // (W/m2)
+    + (4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+       * surface_coefficients
+       .get_infrared_outbound_coefficient_Jansson(surface_type)
+       * pow(sky_emissivity,0.25));
+  
+  double evaporative_heat_flux  =  surface_coefficients          // (W/m2)
+    .get_evaporative_flux_Jansson(surface_type,
+				  Tave_ann,
+				  relative_humidity,
+				  wind_speed,
+				  average_soil_surface_temperature,
+				  0.,
+				  false); // (W/m2)
 
+  double infrared_error = 
+    4.*pow(((sky_temperature+(average_soil_surface_temperature+273.15))/2.),3)
+    * surface_coefficients
+    .get_infrared_outbound_coefficient_Jansson(surface_type)
+    * 273.15*(pow(sky_emissivity,0.25)-1.);
+  
   double H1 = outbound_convective_coefficient/thermal_conductivity; // (1/m)
   double hi = inbound_convective_coefficient;                       // (W/mK)  
   //--------------------------------------------------------------------------
@@ -320,7 +376,7 @@ double AnalyticSolution::get_integral_value(const double time,
 	  + int_exp_cos_0_t( 0.50*RadiationConstantB,C0,2*phi        ,time)   //this line corresponds to radiation (Ws/m2)
 	  + int_exp_cos_0_t(     -RadiationConstantB,C0,  phi        ,time)   //this line corresponds to radiation (Ws/m2)
 	  + 0.50*RadiationConstantB*(1 + 2*RadiationConstantD)*(1/C0)*(1-C1)) //this line corresponds to radiation  (Ws/m2)
-	 + (evaporative_heat_flux-infrared_error)*(1/C0)*(1-C1)                                //this line corresponds to evaporation (Ws/m2)
+	 + (evaporative_heat_flux+infrared_error)*(1/C0)*(1-C1)                                //this line corresponds to evaporation (Ws/m2)
 	 );
     }
   return (Soil_Temperature);
@@ -435,8 +491,8 @@ double AnalyticSolution::int_exp_cos_0_t(const double constant_1 /*(W/m2)*/,
   
   //NOTE I'm multiplying everithing for exp(-constant_2*time)
   
-  return (constant_1*( (( constant_2*cos(period*time) + period*sin(period*time) )/(pow(constant_2,2) + pow(period,2))) -
-		       (exp(-constant_2*time)*(constant_2/(pow(constant_2,2) + pow(period,2))))));
+  return (constant_1*( (  (constant_2*cos(period*time) + period*sin(period*time) )/(pow(constant_2,2) + pow(period,2))  ) -
+		       (  exp(-constant_2*time)*(constant_2/(pow(constant_2,2) + pow(period,2)) )  )  ));
   
 }
 
@@ -498,17 +554,19 @@ void AnalyticSolution::AnalyticSolution::output (const std::string &filename)
 // return value from analytical equation for solar radiation for
 // a given time in seconds
 double AnalyticSolution::get_analytic_solar_radiation(const double time)
-{    
-  return ((RadiationConstantA*cos(theta*time)+RadiationConstantB) *
-	  Rave_factor * RadiationConstantC * 
-	  (pow(cos(phi*time),2) - cos(phi*time) + RadiationConstantD)); // (W/m2)
+{
+  return ( Rave_factor * RadiationConstantC
+	   * (RadiationConstantA*cos(theta*time)+RadiationConstantB)
+	   * (pow(cos(phi*time),2) - cos(phi*time) + RadiationConstantD)); // (W/m2)
 }
 // return value from analytical equation for air temperature for
 // a given time in seconds
 double AnalyticSolution::get_analytic_air_temperature  (const double time)
 {  
-  return (air_temperature_correction_factor * ((Tamp_ave*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_ave) // (C)
-					       - (Tamp_amp*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_amp) * cos(phi*time)));
+  // return (air_temperature_correction_factor * ((Tamp_ave*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_ave) // (C)
+  // 					       - (Tamp_amp*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_amp) * cos(phi*time)));
+  return (Tamp_ave*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_ave // (C)
+	  - (Tamp_amp*(cos(theta*time) + 0.5*sin(theta*time)) + Tave_amp) * cos(phi*time));
 }
 // return value for average wind speed based on TRL measurements. Currently not analytical
 // expresion for wind speed implemented
