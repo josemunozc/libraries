@@ -71,6 +71,7 @@ double InitialValue<dim>::value (const Point<dim>  &p,
       {
 	double x = 0.0;
 	double z = 0.0;
+	DataTools data_tools;
   
 	if (dim!=1)
 	  {
@@ -86,10 +87,10 @@ double InitialValue<dim>::value (const Point<dim>  &p,
 	  
 	    if (-1.*z > initial_sensor_temperatures.back().first)
 	      z=-1.*initial_sensor_temperatures.back().first;
-	    val=interpolate_data(initial_sensor_temperatures,-1.*z);
+	    val=data_tools.interpolate_data(initial_sensor_temperatures,-1.*z);
 	  }
 	else
-	  val=interpolate_data(initial_sensor_temperatures,-1.*p[dim-1]);
+	  val=data_tools.interpolate_data(initial_sensor_temperatures,-1.*p[dim-1]);
 	break;
       }
     default:
