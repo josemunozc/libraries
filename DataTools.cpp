@@ -1,5 +1,6 @@
 #include "DataTools.h"
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <fstream>
 #include <vector>
@@ -12,12 +13,21 @@ DataTools::DataTools()
 
 }
 
-void DataTools::open_file(std::ofstream &file,
-			  const std::string filename)
+void DataTools::open_file(std::ofstream &file,const std::string filename)
 {
-  file.open(filename.c_str());
-  if (!file.is_open())
+	file.open(filename.c_str());
+	if (!file.is_open())
     throw 2;
+}
+
+void DataTools::open_file(std::ifstream &file,const std::string filename)
+{
+	file.open(filename.c_str());
+	if (!file.is_open())
+	{
+		std::cout << "Error opening file: " << filename << "\n";
+		throw 2;
+	}
 }
 
 void DataTools::close_file(std::ofstream &file)
@@ -28,42 +38,57 @@ void DataTools::close_file(std::ofstream &file)
   file.clear();
 }
 
+void DataTools::close_file(std::ifstream &file)
+{
+  file.close();
+  if (file.is_open())
+    throw 3;
+  file.clear();
+}
+
 void DataTools::print_data(std::ostream &outFile,
 			   const std::vector< std::vector<double> > &data,
-			   std::vector< std::vector<int> >*date_and_time,
-			   std::string type_of_data,
 			   int lines_to_print)
 {
-  /*
-   * This function can be used to print two types of data.
-   * One that comes as regular numbers arranged in columns
-   * and another that is correlated with a date and time
-   * like (meteorological data). By default the function
-   * assumes the former and only one container is required.
-   * In the second case, two containers are required, one
-   * with the data and one with the date and time, and they
-   * need to be check if have the same size.
-   **/
-  std::vector< std::vector<int> >& date_and_time_ref=*date_and_time;
-  if (type_of_data.compare("date_and_time")!=0 &&
-      type_of_data.compare("data_only")!=0)
+	if (lines_to_print<0)
+		lines_to_print=data.size();
+
+	if (data.size()!=0)
+		for (int i=0; i<lines_to_print; i++)
+		{
+			outFile.setf(std::ios::fixed, std::ios::floatfield);
+			for (unsigned int j=0; j<data[0].size(); j++)
+			{
+				if(fabs(data[i][j])<0.1)
+					outFile << std::setw(7) << std::setfill(' ')
+				<< std::scientific << data[i][j] << "\t";
+				else
+					outFile << std::setw(7) << std::setfill(' ')
+				<< std::setprecision(2) << std::fixed << data[i][j] << "\t";
+			}
+			outFile << "\n";
+		}
+	else
+	{
+		std::cout << "In DataTools::print_data. Matrix to print is empty\n";
+	}
+}
+
+void DataTools::print_data(std::ostream &outFile,
+			   const std::vector< std::vector<double> > &data,
+			   std::vector< std::vector<int> > &date_and_time,
+			   int lines_to_print)
+{
+  if (data.size()!=date_and_time.size())
     {
-      std::cout << "Error, wrong type of data specified in"
-		<< "print_data function in DataTools.cpp" << std::endl;
-      throw -1;
-    }
-  
-  if (type_of_data.compare("date_and_time")==0 &&
-      data.size()!=date_and_time_ref.size())
-    {
-      for (unsigned int i=0; i<date_and_time_ref[0].size(); i++)
-	std::cout << date_and_time_ref[0][i] << "\t";
-      for (unsigned int i=0; i<data[0].size(); i++)
-	std::cout << data[0][i] << "\t";
-      std::cout << std::endl;
+	  for (unsigned int i=0; i<date_and_time[0].size(); i++)
+		  std::cout << date_and_time[0][i] << "\t";
+	  for (unsigned int i=0; i<data[0].size(); i++)
+		  std::cout << data[0][i] << "\t";
+	  std::cout << std::endl;
       
       std::cout << "Error in print_data function. Vector mismatch." << std::endl;
-      std::cout << "Vector 1 size : " << date_and_time_ref.size() << std::endl;
+      std::cout << "Vector 1 size : " << date_and_time.size() << std::endl;
       std::cout << "Vector 2 size : " << data.size() << std::endl;      
       throw -1;
     }
@@ -78,48 +103,45 @@ void DataTools::print_data(std::ostream &outFile,
    * 6 entries in each line of date_and_time_ref container, 3 for date and
    * 3 for time. Let's check for this
    **/
-  if (type_of_data.compare("date_and_time")==0 &&
-      date_and_time_ref[0].size()!=6)
+  if (date_and_time[0].size()!=6)
     throw 4;
   /*
    * print formated output to selected ostream
    **/
   for (unsigned int i = 0; i<(unsigned int)lines_to_print; i++)
     {
-      if (type_of_data.compare("date_and_time")==0)
-	{
-	  outFile << std::setw(2) << std::setfill('0') << date_and_time_ref[i][0] << "/" 
-		  << std::setw(2) << std::setfill('0') << date_and_time_ref[i][1] << "/" 
-		  << std::setw(2) << std::setfill('0') << date_and_time_ref[i][2] << "\t"
-		  << std::setw(2) << std::setfill('0') << date_and_time_ref[i][3] << ":" 
-		  << std::setw(2) << std::setfill('0') << date_and_time_ref[i][4] << ":" 
-		  << std::setw(2) << std::setfill('0') << date_and_time_ref[i][5] << "\t";
-	}
-      outFile.setf( std::ios::fixed, std::ios::floatfield );
-      for (unsigned int j=0; j<data[0].size(); j++)
-	{
-	  if(fabs(data[i][j])<0.1)
-	    outFile << std::setw(7) << std::setfill(' ')
-		    << std::scientific << data[i][j] << "\t";
-	  else
-	    outFile << std::setw(7) << std::setfill(' ')
-		    << std::setprecision(2) << std::fixed << data[i][j] << "\t";
-	}
-      outFile << "\n";
+	  outFile << std::setw(2) << std::setfill('0') << date_and_time[i][0] << "/"
+			  << std::setw(2) << std::setfill('0') << date_and_time[i][1] << "/"
+			  << std::setw(2) << std::setfill('0') << date_and_time[i][2] << "\t"
+			  << std::setw(2) << std::setfill('0') << date_and_time[i][3] << ":"
+			  << std::setw(2) << std::setfill('0') << date_and_time[i][4] << ":"
+			  << std::setw(2) << std::setfill('0') << date_and_time[i][5] << "\t";
+	  outFile.setf( std::ios::fixed, std::ios::floatfield );
+
+	  for (unsigned int j=0; j<data[0].size(); j++)
+	  {
+		  if(fabs(data[i][j])<0.1)
+			  outFile << std::setw(7) << std::setfill(' ')
+		  << std::scientific << data[i][j] << "\t";
+		  else
+			  outFile << std::setw(7) << std::setfill(' ')
+		  << std::setprecision(2) << std::fixed << data[i][j] << "\t";
+	  }
+	  outFile << "\n";
     }
 }
 
 void DataTools::read_data(const std::vector< std::string >   &filenames,
-			  std::vector< std::vector<int> >    &date_and_time,
-			  std::vector< std::vector<double> > &data,
-			  bool day_number_column=true)
+		std::vector< std::vector<double> > &data,
+		std::vector< std::vector<int> >    &date_and_time,
+		bool day_number_column)
 {
   /*
    * We clear the containers that will store met
    * data and date data from each set of files
    **/
-  data.clear();
-  date_and_time.clear();
+	data.clear();
+	date_and_time.clear();
   /*
    * In this loop, we will go through each set of 
    * files, reading them, storing the entries in 
@@ -150,7 +172,7 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
       while (std::getline(file,line_file))
 	{
 	  /*
-	   * there are two possible options (so far) for the file 
+	   * there are two possible options (so far) for the file
 	   * we are passing to this function. 1) the file is a met
 	   * file with date and time in the first and second column:
 	   * dd/mm/yyyy\tHH/MM/SS\tD1\tD2\t...
@@ -159,7 +181,7 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
 	   * D1\tD2\tD3\t.....
 	   * In the first case we look for the characters '\' or
 	   * ':' in the first line (we are assuming that all lines
-	   * follow the same pattern). If we find them then is the 
+	   * follow the same pattern). If we find them then is the
 	   * first case, if not, then is the second.
 	   **/
 	  std::stringstream file_iss;
@@ -201,9 +223,9 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
 	    }
 	  else
 	    {
-	      while (std::getline(file_iss,file_token,'\t'))
-		row_data.push_back(atof(file_token.c_str()));
-	      data.push_back(row_data);
+		  while (std::getline(file_iss,file_token,'\t'))
+			  row_data.push_back(atof(file_token.c_str()));
+		  data.push_back(row_data);
 	    }
 	}
       /*
@@ -221,6 +243,30 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
    **/
 }
 
+void DataTools::read_data(const std::vector< std::string >   &filenames,
+		std::vector< std::vector<double> > &data)
+{
+	data.clear();
+	for (unsigned int j=0; j<filenames.size(); j++)
+	{
+		std::ifstream file;
+		open_file(file,filenames[j].c_str());
+
+		std::string line_file;
+		std::string file_token;
+		while (std::getline(file,line_file))
+		{
+			std::stringstream file_iss;
+			file_iss << line_file;
+			std::vector<double> row_data;
+			while (std::getline(file_iss,file_token,'\t'))
+				row_data.push_back(atof(file_token.c_str()));
+			data.push_back(row_data);
+		}
+		close_file(file);
+	}
+}
+
 double DataTools::interpolate_data(std::vector< std::pair<double,double> > table,
 				   const double x)
 {
@@ -231,14 +277,14 @@ double DataTools::interpolate_data(std::vector< std::pair<double,double> > table
    **/
   if (x > table.back().first)
     {
-      std::cout << "Warning. In data_tools.h -> interpolate_data. value out of bound." 
-		<< std::endl;
+      std::cout << "Warning. In data_tools.h -> interpolate_data. value out of bound."
+    		  << " x= " << x << std::endl;
       return (INF);
     }
   if (x < table[0].first)
     {
       std::cout << "Warning. In data_tools.h -> interpolate_data. value out of bound." 
-		<< std::endl;
+    		  << " x= " << x << std::endl;
       return (-INF);
     }
   std::vector<std::pair<double, double> >::iterator it, it2;

@@ -10,25 +10,32 @@
 class DataTools
 {
 public:
-  DataTools();
-  void open_file(std::ofstream &file,
-		 const std::string filename);
-  
-  void close_file(std::ofstream &file);
+	DataTools();
+	void open_file(std::ofstream &file,const std::string filename);
+	void open_file(std::ifstream &file,const std::string filename);
+	void close_file(std::ofstream &file);
+	void close_file(std::ifstream &file);
 
-  void print_data (std::ostream &outFile,
-		   const std::vector< std::vector<double> > &data,
-		   std::vector< std::vector<int> >* date_and_time=0,
-		   std::string type_of_data="data_only",
-		   int lines_to_print=-1);
-    
-  void read_data(const std::vector< std::string >   &filenames,
-		 std::vector< std::vector<int> >    &date_and_time,
-		 std::vector< std::vector<double> > &data,
-		 bool day_number_column);
-  
-  double interpolate_data(std::vector< std::pair<double,double> > table,
-			  const double x);
+	void print_data (std::ostream &outFile,
+			const std::vector< std::vector<double> > &data,
+			int lines_to_print=-1);
+
+	void print_data (std::ostream &outFile,
+			const std::vector< std::vector<double> > &data,
+			std::vector< std::vector<int> > &date_and_time,
+			int lines_to_print=-1);
+
+	void read_data(const std::vector< std::string >   &filenames,
+			std::vector< std::vector<double> > &data,
+			std::vector< std::vector<int> >    &date_and_time,
+			bool day_number_column=false);
+
+	void read_data(const std::vector< std::string >   &filenames,
+			std::vector< std::vector<double> > &data);
+
+
+	double interpolate_data(std::vector< std::pair<double,double> > table,
+			const double x);
 
 private:  
 };
