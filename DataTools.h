@@ -2,10 +2,14 @@
 #define __DATA_TOOLS_INCLUDED__
 
 #include <string>
+#include <vector>
 #include <sstream>
 #include <fstream>
-#include <vector>
-//#include <iostream>
+#include <stdlib.h> // atoi
+#include <algorithm> // lower_bound
+#include <iostream> // cout
+#include <iomanip> // setw
+#include <math.h> // fabs
 
 class DataTools
 {

@@ -1,12 +1,5 @@
 #include "DataTools.h"
-#include <string>
-#include <cstring>
-#include <sstream>
-#include <fstream>
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <math.h>
+
 
 DataTools::DataTools()
 {
