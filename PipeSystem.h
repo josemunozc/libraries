@@ -12,12 +12,12 @@ public:
 private:
   const unsigned int number_of_pipes;
   const double time_step;
-  static constexpr double lenght_of_pipe_section=30.+0.5*2.5*3.14159265359;  //(m)
-  static constexpr double pipe_external_radius=0.0125; //(m)
-  static constexpr double pipe_internal_radius=0.0102; //(m)
-  static constexpr double pipe_flow_rate=0.155;//0.155;        //(kg/s)
-  static constexpr double water_specific_heat_capacity=4181.3;//(J/kgK)
-  static constexpr double pi=3.14159265359;
+  static const double lenght_of_pipe_section=30.+0.5*2.5*3.14159265359;  //(m)
+  static const double pipe_external_radius=0.0125; //(m)
+  static const double pipe_internal_radius=0.0102; //(m)
+  static const double pipe_flow_rate=0.155;//0.155;        //(kg/s)
+  static const double water_specific_heat_capacity=4181.3;//(J/kgK)
+  static const double pi=3.14159265359;
   
   double pipe_internal_area;
   double pipe_cross_section_area;
