@@ -60,7 +60,8 @@ public:
 		     std::vector< std::vector<double> > &met_data,
 		     int time_step,
 		     const int preheating_step,
-		     const std::string met_data_type);
+		     const std::string met_data_type,
+		     const std::string input_path);
 private:  
 };
 

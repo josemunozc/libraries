@@ -7,19 +7,19 @@ DataTools::DataTools()
 
 void DataTools::open_file(std::ofstream &file,const std::string filename)
 {
-	file.open(filename.c_str());
-	if (!file.is_open())
+  file.open(filename.c_str());
+  if (!file.is_open())
     throw 2;
 }
 
 void DataTools::open_file(std::ifstream &file,const std::string filename)
 {
-	file.open(filename.c_str());
-	if (!file.is_open())
-	{
-		std::cout << "Error opening file: " << filename << "\n";
-		throw 2;
-	}
+  file.open(filename.c_str());
+  if (!file.is_open())
+    {
+      std::cout << "Error opening file: " << filename << "\n";
+      throw 2;
+    }
 }
 
 void DataTools::close_file(std::ofstream &file)
@@ -42,28 +42,28 @@ void DataTools::print_data(std::ostream &outFile,
 			   const std::vector< std::vector<double> > &data,
 			   int lines_to_print)
 {
-	if (lines_to_print<0)
-		lines_to_print=data.size();
+  if (lines_to_print<0)
+    lines_to_print=data.size();
 
-	if (data.size()!=0)
-		for (int i=0; i<lines_to_print; i++)
-		{
-			outFile.setf(std::ios::fixed, std::ios::floatfield);
-			for (unsigned int j=0; j<data[0].size(); j++)
-			{
-				if(fabs(data[i][j])<0.1)
-					outFile << std::setw(7) << std::setfill(' ')
-				<< std::scientific << data[i][j] << "\t";
-				else
-					outFile << std::setw(7) << std::setfill(' ')
-				<< std::setprecision(2) << std::fixed << data[i][j] << "\t";
-			}
-			outFile << "\n";
-		}
-	else
-	{
-		std::cout << "In DataTools::print_data. Matrix to print is empty\n";
-	}
+  if (data.size()!=0)
+    for (int i=0; i<lines_to_print; i++)
+      {
+	outFile.setf(std::ios::fixed, std::ios::floatfield);
+	for (unsigned int j=0; j<data[0].size(); j++)
+	  {
+	    if(fabs(data[i][j])<0.1)
+	      outFile << std::setw(7) << std::setfill(' ')
+		      << std::scientific << data[i][j] << "\t";
+	    else
+	      outFile << std::setw(7) << std::setfill(' ')
+		      << std::setprecision(2) << std::fixed << data[i][j] << "\t";
+	  }
+	outFile << "\n";
+      }
+  else
+    {
+      std::cout << "In DataTools::print_data. Matrix to print is empty\n";
+    }
 }
 
 void DataTools::print_data(std::ostream &outFile,
@@ -73,11 +73,11 @@ void DataTools::print_data(std::ostream &outFile,
 {
   if (data.size()!=date_and_time.size())
     {
-	  for (unsigned int i=0; i<date_and_time[0].size(); i++)
-		  std::cout << date_and_time[0][i] << "\t";
-	  for (unsigned int i=0; i<data[0].size(); i++)
-		  std::cout << data[0][i] << "\t";
-	  std::cout << std::endl;
+      for (unsigned int i=0; i<date_and_time[0].size(); i++)
+	std::cout << date_and_time[0][i] << "\t";
+      for (unsigned int i=0; i<data[0].size(); i++)
+	std::cout << data[0][i] << "\t";
+      std::cout << std::endl;
       
       std::cout << "Error in print_data function. Vector mismatch." << std::endl;
       std::cout << "Vector 1 size : " << date_and_time.size() << std::endl;
@@ -102,38 +102,38 @@ void DataTools::print_data(std::ostream &outFile,
    **/
   for (unsigned int i = 0; i<(unsigned int)lines_to_print; i++)
     {
-	  outFile << std::setw(2) << std::setfill('0') << date_and_time[i][0] << "/"
-			  << std::setw(2) << std::setfill('0') << date_and_time[i][1] << "/"
-			  << std::setw(2) << std::setfill('0') << date_and_time[i][2] << "\t"
-			  << std::setw(2) << std::setfill('0') << date_and_time[i][3] << ":"
-			  << std::setw(2) << std::setfill('0') << date_and_time[i][4] << ":"
-			  << std::setw(2) << std::setfill('0') << date_and_time[i][5] << "\t";
-	  outFile.setf( std::ios::fixed, std::ios::floatfield );
+      outFile << std::setw(2) << std::setfill('0') << date_and_time[i][0] << "/"
+	      << std::setw(2) << std::setfill('0') << date_and_time[i][1] << "/"
+	      << std::setw(2) << std::setfill('0') << date_and_time[i][2] << "\t"
+	      << std::setw(2) << std::setfill('0') << date_and_time[i][3] << ":"
+	      << std::setw(2) << std::setfill('0') << date_and_time[i][4] << ":"
+	      << std::setw(2) << std::setfill('0') << date_and_time[i][5] << "\t";
+      outFile.setf( std::ios::fixed, std::ios::floatfield );
 
-	  for (unsigned int j=0; j<data[0].size(); j++)
-	  {
-		  if(fabs(data[i][j])<0.1)
-			  outFile << std::setw(7) << std::setfill(' ')
-		  << std::scientific << data[i][j] << "\t";
-		  else
-			  outFile << std::setw(7) << std::setfill(' ')
-		  << std::setprecision(2) << std::fixed << data[i][j] << "\t";
-	  }
-	  outFile << "\n";
+      for (unsigned int j=0; j<data[0].size(); j++)
+	{
+	  if(fabs(data[i][j])<0.1)
+	    outFile << std::setw(7) << std::setfill(' ')
+		    << std::scientific << data[i][j] << "\t";
+	  else
+	    outFile << std::setw(7) << std::setfill(' ')
+		    << std::setprecision(2) << std::fixed << data[i][j] << "\t";
+	}
+      outFile << "\n";
     }
 }
 
 void DataTools::read_data(const std::vector< std::string >   &filenames,
-		std::vector< std::vector<double> > &data,
-		std::vector< std::vector<int> >    &date_and_time,
-		bool day_number_column)
+			  std::vector< std::vector<double> > &data,
+			  std::vector< std::vector<int> >    &date_and_time,
+			  bool day_number_column)
 {
   /*
    * We clear the containers that will store met
    * data and date data from each set of files
    **/
-	data.clear();
-	date_and_time.clear();
+  data.clear();
+  date_and_time.clear();
   /*
    * In this loop, we will go through each set of 
    * files, reading them, storing the entries in 
@@ -215,9 +215,9 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
 	    }
 	  else
 	    {
-		  while (std::getline(file_iss,file_token,'\t'))
-			  row_data.push_back(atof(file_token.c_str()));
-		  data.push_back(row_data);
+	      while (std::getline(file_iss,file_token,'\t'))
+		row_data.push_back(atof(file_token.c_str()));
+	      data.push_back(row_data);
 	    }
 	}
       /*
@@ -236,27 +236,27 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
 }
 
 void DataTools::read_data(const std::vector< std::string >   &filenames,
-		std::vector< std::vector<double> > &data)
+			  std::vector< std::vector<double> > &data)
 {
-	data.clear();
-	for (unsigned int j=0; j<filenames.size(); j++)
-	{
-		std::ifstream file;
-		open_file(file,filenames[j].c_str());
+  data.clear();
+  for (unsigned int j=0; j<filenames.size(); j++)
+    {
+      std::ifstream file;
+      open_file(file,filenames[j].c_str());
 
-		std::string line_file;
-		std::string file_token;
-		while (std::getline(file,line_file))
-		{
-			std::stringstream file_iss;
-			file_iss << line_file;
-			std::vector<double> row_data;
-			while (std::getline(file_iss,file_token,'\t'))
-				row_data.push_back(atof(file_token.c_str()));
-			data.push_back(row_data);
-		}
-		close_file(file);
+      std::string line_file;
+      std::string file_token;
+      while (std::getline(file,line_file))
+	{
+	  std::stringstream file_iss;
+	  file_iss << line_file;
+	  std::vector<double> row_data;
+	  while (std::getline(file_iss,file_token,'\t'))
+	    row_data.push_back(atof(file_token.c_str()));
+	  data.push_back(row_data);
 	}
+      close_file(file);
+    }
 }
 
 double DataTools::interpolate_data(std::vector< std::pair<double,double> > table,
@@ -270,13 +270,13 @@ double DataTools::interpolate_data(std::vector< std::pair<double,double> > table
   if (x > table.back().first)
     {
       std::cout << "Warning. In data_tools.h -> interpolate_data. value out of bound."
-    		  << " x= " << x << std::endl;
+		<< " x= " << x << std::endl;
       return (INF);
     }
   if (x < table[0].first)
     {
       std::cout << "Warning. In data_tools.h -> interpolate_data. value out of bound." 
-    		  << " x= " << x << std::endl;
+		<< " x= " << x << std::endl;
       return (-INF);
     }
   std::vector<std::pair<double, double> >::iterator it, it2;
@@ -293,13 +293,13 @@ double DataTools::interpolate_data(std::vector< std::pair<double,double> > table
 
 bool DataTools::file_exists(const std::string& name)
 {
-	/*
-	 * Code copied from:
-	 * http://stackoverflow.com/questions/12774207/
-	 * fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-	 * */
-	struct stat buffer;
-	return (stat (name.c_str(), &buffer)==0);
+  /*
+   * Code copied from:
+   * http://stackoverflow.com/questions/12774207/
+   * fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+   * */
+  struct stat buffer;
+  return (stat (name.c_str(), &buffer)==0);
 }
 
 bool DataTools::dir_exists(const std::string& name)
@@ -466,114 +466,115 @@ void DataTools::read_met_data(std::vector< std::vector<int> >    &date_and_time,
 			      std::vector< std::vector<double> > &met_data,
 			      int time_step,
 			      const int preheating_step,
-			      const std::string met_data_type)
+			      const std::string met_data_type,
+			      const std::string input_path)
 {
-	date_and_time.clear();
-	met_data.clear();
+  date_and_time.clear();
+  met_data.clear();
 
-	bool day_number = false;
+  bool day_number = false;
 
-	std::string met_data_filename = "met_data_ph_step_";
-	std::stringstream ph_step;
-	ph_step << preheating_step;
-	met_data_filename += ph_step.str() + ".txt";
-	/*
-	 * Check if we have a file with the previous name. If so
-	 * read from this file the met data. We are assuming that
-	 * the file contains the corresponding met data for the
-	 * preheating step of interest. There is not way to check
-	 * if this actually true. I'm just guessing that there
-	 * shouldn't be any other file there that happens to have
-	 * the same name and doesn't contain the desired met data.
-	 */
-	std::ifstream file (met_data_filename.c_str());
-	if (file.good())
+  std::string met_data_filename = "met_data_ph_step_";
+  std::stringstream ph_step;
+  ph_step << preheating_step;
+  met_data_filename += ph_step.str() + ".txt";
+  /*
+   * Check if we have a file with the previous name. If so
+   * read from this file the met data. We are assuming that
+   * the file contains the corresponding met data for the
+   * preheating step of interest. There is not way to check
+   * if this actually true. I'm just guessing that there
+   * shouldn't be any other file there that happens to have
+   * the same name and doesn't contain the desired met data.
+   */
+  std::ifstream file (met_data_filename.c_str());
+  if (file.good())
+    {
+      std::vector<std::string> met_data_file;
+      met_data_file.push_back(met_data_filename);
+
+      read_data(met_data_file,
+		met_data,
+		date_and_time,
+		day_number);
+    }
+  else
+    {
+      Names names(input_path);
+      std::vector<std::string> met_data_filenames;
+
+      names.get_met_data_filenames(met_data_filenames,
+				   preheating_step,
+				   met_data_type);
+
+      read_data(met_data_filenames,
+		met_data,
+		date_and_time,
+		day_number);
+
+      if (time_step<3600)
 	{
-		std::vector<std::string> met_data_file;
-		met_data_file.push_back(met_data_filename);
+	  std::vector< std::vector<int> > date_and_time_in_seconds;
 
-		read_data(met_data_file,
-			  met_data,
-			  date_and_time,
-			  day_number);
+	  std::vector< std::vector<int> >    temp_date_and_time;
+	  std::vector< std::vector<int> >    temp_date_and_time_in_seconds;
+	  std::vector< std::vector<double> > temp_met_data;
+
+	  date_to_seconds(date_and_time,
+			  date_and_time_in_seconds);
+	  if (date_and_time_in_seconds.size() != date_and_time.size())
+	    throw 3;
+
+	  // generate the output times we want
+	  int seconds = date_and_time_in_seconds[0][0];
+	  while (seconds <= date_and_time_in_seconds.back()[0])
+	    {
+	      std::vector<int> temp_date_and_time_in_seconds_row;
+	      temp_date_and_time_in_seconds_row.push_back (seconds);
+	      seconds += time_step;
+	      temp_date_and_time_in_seconds.push_back(temp_date_and_time_in_seconds_row);
+	    }
+	  // generate the corresponding dates
+	  seconds_to_date( temp_date_and_time,
+			   temp_date_and_time_in_seconds);
+
+	  std::vector<std::vector<std::pair<double,double> > >tables;
+	  for (unsigned int j=0; j<met_data[0].size(); j++)
+	    {
+	      std::vector<std::pair<double,double> > table;
+	      for (unsigned int i=0; i<met_data.size(); i++)
+		table.push_back(std::make_pair((double)date_and_time_in_seconds[i][0],met_data[i][j]));
+	      tables.push_back(table);
+	    }
+	  // interpolate data according to the previous
+	  // generated time entries
+	  for (unsigned int i=0; i<temp_date_and_time_in_seconds.size(); i++)
+	    {
+	      std::vector<double> temp1;
+	      temp1.clear();
+	      for (unsigned int j=0; j<met_data[0].size(); j++)
+		temp1.push_back( interpolate_data(tables[j],(double)temp_date_and_time_in_seconds[i][0]));
+	      temp_met_data.push_back(temp1);
+	    }
+	  met_data = temp_met_data;
+	  date_and_time = temp_date_and_time;
 	}
-	else
+      /*
+       * If we need to consider several years we do it like this
+       */
+      if (preheating_step==1)
 	{
-		Names names;
-		std::vector<std::string> met_data_filenames;
+	  unsigned int one_year_size = date_and_time.size();
+	  for  (unsigned int i=0; i<7; i++)
+	    for (unsigned int j=0; j<one_year_size; j++)
+	      {
+		std::vector<int> date;
+		date=date_and_time[j];
+		date[2]= date[2]+i+1;
 
-		names.get_met_data_filenames(met_data_filenames,
-				preheating_step,
-				met_data_type);
-
-		read_data(met_data_filenames,
-			  met_data,
-			  date_and_time,
-			  day_number);
-
-		if (time_step<3600)
-		{
-			std::vector< std::vector<int> > date_and_time_in_seconds;
-
-			std::vector< std::vector<int> >    temp_date_and_time;
-			std::vector< std::vector<int> >    temp_date_and_time_in_seconds;
-			std::vector< std::vector<double> > temp_met_data;
-
-			date_to_seconds(date_and_time,
-					date_and_time_in_seconds);
-			if (date_and_time_in_seconds.size() != date_and_time.size())
-				throw 3;
-
-			// generate the output times we want
-			int seconds = date_and_time_in_seconds[0][0];
-			while (seconds <= date_and_time_in_seconds.back()[0])
-			{
-				std::vector<int> temp_date_and_time_in_seconds_row;
-				temp_date_and_time_in_seconds_row.push_back (seconds);
-				seconds += time_step;
-				temp_date_and_time_in_seconds.push_back(temp_date_and_time_in_seconds_row);
-			}
-			// generate the corresponding dates
-			seconds_to_date( temp_date_and_time,
-					temp_date_and_time_in_seconds);
-
-			std::vector<std::vector<std::pair<double,double> > >tables;
-			for (unsigned int j=0; j<met_data[0].size(); j++)
-			{
-				std::vector<std::pair<double,double> > table;
-				for (unsigned int i=0; i<met_data.size(); i++)
-					table.push_back(std::make_pair((double)date_and_time_in_seconds[i][0],met_data[i][j]));
-				tables.push_back(table);
-			}
-			// interpolate data according to the previous
-			// generated time entries
-			for (unsigned int i=0; i<temp_date_and_time_in_seconds.size(); i++)
-			{
-				std::vector<double> temp1;
-				temp1.clear();
-				for (unsigned int j=0; j<met_data[0].size(); j++)
-					temp1.push_back( interpolate_data(tables[j],(double)temp_date_and_time_in_seconds[i][0]));
-				temp_met_data.push_back(temp1);
-			}
-			met_data = temp_met_data;
-			date_and_time = temp_date_and_time;
-		}
-		/*
-		 * If we need to consider several years we do it like this
-		 */
-		if (preheating_step==1)
-		{
-			unsigned int one_year_size = date_and_time.size();
-			for  (unsigned int i=0; i<7; i++)
-				for (unsigned int j=0; j<one_year_size; j++)
-				{
-					std::vector<int> date;
-					date=date_and_time[j];
-					date[2]= date[2]+i+1;
-
-					date_and_time.push_back(date);
-					met_data.push_back(met_data[j]);
-				}
-		}
+		date_and_time.push_back(date);
+		met_data.push_back(met_data[j]);
+	      }
 	}
+    }
 }
