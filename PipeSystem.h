@@ -12,12 +12,12 @@ class PipeSystem
 private:
   const unsigned int number_of_pipes;
   const double time_step;
-  static constexpr double lenght_of_pipe_section=30.+0.5*2.5*3.14159265359;  //(m)
-  static constexpr double pipe_external_radius=0.0125; //(m)
-  static constexpr double pipe_internal_radius=0.0102; //(m)
-  static constexpr double pipe_flow_rate=0.155;//0.155;        //(kg/s)
-  static constexpr double water_specific_heat_capacity=4181.3;//(J/kgK)
-  static constexpr double pi=3.14159265359;
+  const double lenght_of_pipe_section;//=30.+0.5*2.5*3.14159265359;  //(m)
+  const double pipe_external_radius;//=0.0125; //(m)
+  const double pipe_internal_radius;//=0.0102; //(m)
+  const double pipe_flow_rate;//=0.155;//0.155;        //(kg/s)
+  const double water_specific_heat_capacity;//=4181.3;//(J/kgK)
+  const double pi;//=3.14159265359;
   
   double pipe_internal_area;
   double pipe_cross_section_area;
@@ -28,8 +28,14 @@ private:
 };
 
 PipeSystem::PipeSystem (const double time_step_):
-  number_of_pipes (40),
-  time_step (time_step_)
+number_of_pipes (40),
+  time_step (time_step_),
+  lenght_of_pipe_section(30.+0.5*2.5*3.14159265359),
+  pipe_external_radius(0.0125),
+  pipe_internal_radius(0.0102),
+  pipe_flow_rate(0.155),
+  water_specific_heat_capacity(4181.3),
+  pi(3.14159265359)
 {		
   pipe_internal_area//(m2) 2.17 m2
     =2.*pi*pipe_internal_radius
