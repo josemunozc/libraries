@@ -264,7 +264,7 @@ double BoundaryConditions::get_convective_flux(const std::string surface_type,
   else if (author=="Herb")
     convective_coefficient
       =surface_coefficients // (W/m2K)
-      .get_convective_coefficient_Herb(surface_type,
+      .get_convective_coefficient_Herb(/*surface_type,*/
 				       air_temperature,
 				       relative_humidity,
 				       wind_speed,
@@ -283,7 +283,7 @@ double BoundaryConditions::get_convective_flux(const std::string surface_type,
       double level_of_soil_evaporation=0.0;
       convective_coefficient
 	=surface_coefficients // (W/m2K)
-	.get_convective_coefficient_Best(surface_type,
+	.get_convective_coefficient_Best(/*surface_type,*/
 					 air_temperature,
 					 relative_humidity,
 					 wind_speed,
@@ -355,7 +355,7 @@ get_evaporative_flux(const std::string surface_type,
     {
       evaporative_flux = 
 	surface_coefficients
-	.get_evaporative_flux_Herb(surface_type,
+	.get_evaporative_flux_Herb(/*surface_type,*/
 				   air_temperature,
 				   relative_humidity,
 				   wind_speed,
@@ -376,7 +376,7 @@ get_evaporative_flux(const std::string surface_type,
       double level_of_soil_evaporation=0.0;
       evaporative_flux
 	=surface_coefficients
-	.get_evaporative_flux_Best(surface_type,
+	.get_evaporative_flux_Best(/*surface_type,*/
 				   air_temperature,
 				   relative_humidity,
 				   wind_speed,
@@ -394,7 +394,7 @@ get_evaporative_flux(const std::string surface_type,
 }
 
 double BoundaryConditions::
-get_canopy_temperature(const std::string surface_type,
+get_canopy_temperature(/*const std::string surface_type,*/
 		       const std::string author,
 		       const double canopy_density)
 {
@@ -434,11 +434,11 @@ get_canopy_temperature(const std::string surface_type,
     .get_infrared_outbound_coefficient_Best("canopy");
   double coeff_convective
     =surface_coefficients
-    .get_convective_coefficient_canopy_Best(surface_type,
+    .get_convective_coefficient_canopy_Best(/*surface_type,*/
 					    wind_speed);
   double evaporative_heat_flux
     =surface_coefficients
-    .get_evaporative_flux_canopy_Best(surface_type,
+    .get_evaporative_flux_canopy_Best(/*surface_type,*/
 				      air_temperature,
 				      relative_humidity,
 				      wind_speed,
@@ -447,7 +447,7 @@ get_canopy_temperature(const std::string surface_type,
 				      false);
   double evaporative_heat_flux_derivative
     =surface_coefficients
-    .get_evaporative_flux_canopy_Best(surface_type,
+    .get_evaporative_flux_canopy_Best(/*surface_type,*/
 				      air_temperature,
 				      relative_humidity,
 				      wind_speed,
@@ -732,7 +732,7 @@ get_outbound_coefficient (const std::string surface_type,
     {
       print_outbound_convection_coefficient
 	= surface_coefficients
-	.get_convective_coefficient_Herb (surface_type,
+	.get_convective_coefficient_Herb (/*surface_type,*/
 					  air_temperature,
 					  relative_humidity,
 					  wind_speed,
@@ -752,7 +752,7 @@ get_outbound_coefficient (const std::string surface_type,
       print_outbound_convection_coefficient
 	=(1.-level_of_soil_evaporation*canopy_density) *
 	surface_coefficients
-	.get_convective_coefficient_Best (surface_type,
+	.get_convective_coefficient_Best (/*surface_type,*/
 					  air_temperature,
 					  relative_humidity,
 					  wind_speed,
@@ -783,7 +783,7 @@ get_outbound_coefficient (const std::string surface_type,
       else if (author == "Herb")
 	print_outbound_evaporative_coefficient
 	  =surface_coefficients
-	  .get_evaporative_coefficient_Herb(surface_type,air_temperature,
+	  .get_evaporative_coefficient_Herb(/*surface_type,*/air_temperature,
 					    relative_humidity,wind_speed,
 					    old_surface_temperature,
 					    new_surface_temperature,
@@ -794,7 +794,7 @@ get_outbound_coefficient (const std::string surface_type,
 	  print_outbound_evaporative_coefficient
 	    = (1.-level_of_soil_evaporation*canopy_density) *
 	    surface_coefficients
-	    .get_evaporative_coefficient_Best(surface_type,air_temperature,
+	    .get_evaporative_coefficient_Best(/*surface_type,*/air_temperature,
 					      relative_humidity,wind_speed,
 					      old_surface_temperature,
 					      new_surface_temperature,
@@ -847,7 +847,7 @@ get_evaporative_mass_flux (const std::string surface_type,
     {
       evaporative_mass_flux =
 	surface_coefficients
-	.get_evaporative_mass_flux_Herb(surface_type,
+	.get_evaporative_mass_flux_Herb(/*surface_type,*/
 					air_temperature,
 					relative_humidity,
 					wind_speed,
@@ -867,7 +867,7 @@ get_evaporative_mass_flux (const std::string surface_type,
       evaporative_mass_flux =
 	(1.-canopy_density)*
 	surface_coefficients
-	.get_evaporative_mass_flux_Best (surface_type,
+	.get_evaporative_mass_flux_Best (/*surface_type,*/
 					 air_temperature,
 					 relative_humidity,
 					 wind_speed,

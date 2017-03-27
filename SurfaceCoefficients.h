@@ -90,28 +90,28 @@ public:
 						const double air_temperature,
 						const double relative_humidity);
   double get_infrared_outbound_coefficient_Herb(const std::string surface_type);
-  double get_convective_coefficient_Herb       (const std::string surface_type,
+  double get_convective_coefficient_Herb       (/*const std::string surface_type,*/
 						const double air_temperature,
 						const double relative_humidity,
 						const double wind_speed,
 						const double old_surface_temperature,
 						const double new_surface_temperature,
 						const bool new_estimate);
-  double get_evaporative_coefficient_Herb      (const std::string surface_type,
+  double get_evaporative_coefficient_Herb      (/*const std::string surface_type,*/
 						const double air_temperature,
 						const double relative_humidity,
 						const double wind_speed,
 						const double old_surface_temperature,
 						const double new_surface_temperature,
 						const bool new_estimate);
-  double get_evaporative_flux_Herb             (const std::string surface_type,
+  double get_evaporative_flux_Herb             (/*const std::string surface_type,*/
 						const double air_temperature,
 						const double relative_humidity,
 						const double wind_speed,
 						double old_surface_temperature,
 						double new_surface_temperature,
 						const bool new_estimate);
-  double get_evaporative_mass_flux_Herb        (const std::string surface_type,
+  double get_evaporative_mass_flux_Herb        (/*const std::string surface_type,*/
 						const double air_temperature,
 						const double relative_humidity,
 						const double wind_speed,
@@ -128,37 +128,37 @@ public:
 							  const double relative_humidity);
   double get_infrared_inbound_coefficient_canopy_soil_Best(const std::string surface_type);
   double get_infrared_outbound_coefficient_Best(const std::string surface_type);
-  double get_convective_coefficient_Best (const std::string surface_type,
+  double get_convective_coefficient_Best (/*const std::string surface_type,*/
 					  const double air_temperature,
 					  const double relative_humidity,
 					  const double wind_speed,
 					  const double old_surface_temperature,
 					  const double new_surface_temperature,
 					  const bool new_estimate);
-  double get_evaporative_coefficient_Best(const std::string surface_type,
+  double get_evaporative_coefficient_Best(/*const std::string surface_type,*/
 					  const double air_temperature,
 					  const double relative_humidity,
 					  const double wind_speed,
 					  const double old_surface_temperature,
 					  const double new_surface_temperature,
 					  const bool new_estimate);
-  double get_evaporative_flux_Best       (const std::string surface_type,
+  double get_evaporative_flux_Best       (/*const std::string surface_type,*/
 					  const double air_temperature,
 					  const double relative_humidity,
 					  const double wind_speed,
 					  double old_surface_temperature,
 					  double new_surface_temperature,
 					  const bool new_estimate);
-  double get_evaporative_mass_flux_Best  (const std::string surface_type,
+  double get_evaporative_mass_flux_Best  (/*const std::string surface_type,*/
 					  const double air_temperature,
 					  const double relative_humidity,
 					  const double wind_speed,
 					  const double old_surface_temperature,
 					  const double new_surface_temperature,
 					  const bool new_estimate);
-  double get_convective_coefficient_canopy_Best(const std::string surface_type,
+  double get_convective_coefficient_canopy_Best(/*const std::string surface_type,*/
 						const double wind_speed);
-  double get_evaporative_flux_canopy_Best(const std::string surface_type,
+  double get_evaporative_flux_canopy_Best(/*const std::string surface_type,*/
 					  const double air_temperature,
 					  const double relative_humidity,
 					  const double wind_speed,

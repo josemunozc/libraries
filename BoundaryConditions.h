@@ -39,7 +39,7 @@ class BoundaryConditions
 				const double new_surface_temperature,
 				const bool new_estimate
 				/*const bool linear_evaporative*/);
-  double get_canopy_temperature(const std::string surface_type,
+  double get_canopy_temperature(/*const std::string surface_type,*/
 				const std::string author,
 				const double canopy_temperature);
   double get_inbound_heat_flux (const std::string surface_type,
