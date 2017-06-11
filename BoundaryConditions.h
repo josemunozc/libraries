@@ -63,7 +63,7 @@ class BoundaryConditions
 				   const double canopy_density,
 				   const double old_surface_temperature,
 				   const double new_surface_temperature,
-				   const double new_estimate
+				   const bool new_estimate
 				   /*const bool linear_evaporative*/);
 
   double get_evaporative_mass_flux(const std::string surface_type,

@@ -693,7 +693,7 @@ get_outbound_coefficient (const std::string surface_type,
 			  const double canopy_density,
 			  const double old_surface_temperature,
 			  const double new_surface_temperature,
-			  const double new_estimate)
+			  const bool new_estimate)
 {
   print_outbound_convection_coefficient  = 0.;
   print_outbound_infrared_coefficient    = 0.;

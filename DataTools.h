@@ -40,6 +40,8 @@ public:
   void read_data(const std::vector< std::string >   &filenames,
 		 std::vector< std::vector<double> > &data);
 
+  void read_data(const std::string &filename,
+		  std::vector< std::vector<double> > &data);
 
   double interpolate_data(std::vector< std::pair<double,double> > table,
 			  const double x);

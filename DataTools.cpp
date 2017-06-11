@@ -259,6 +259,27 @@ void DataTools::read_data(const std::vector< std::string >   &filenames,
     }
 }
 
+void DataTools::read_data(const std::string &filename,
+			  std::vector< std::vector<double> > &data)
+{
+	data.clear();
+	std::ifstream file;
+	open_file(file,filename.c_str());
+
+	std::string line_file;
+	std::string file_token;
+	while (std::getline(file,line_file))
+	{
+		std::stringstream file_iss;
+		file_iss << line_file;
+		std::vector<double> row_data;
+		while (std::getline(file_iss,file_token,'\t'))
+			row_data.push_back(atof(file_token.c_str()));
+		data.push_back(row_data);
+	}
+	close_file(file);
+}
+
 double DataTools::interpolate_data(std::vector< std::pair<double,double> > table,
 				   const double x)
 {
