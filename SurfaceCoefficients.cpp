@@ -139,14 +139,14 @@ vapour_pressure_surface_new_estimate (const double old_surface_temperature,
 				      const double new_surface_temperature)
 {
   double old_vapour_pressure_surface
-    = Philip_1957_surface_vapour_pressure (old_surface_temperature);
+    = Philip_1957_surface_vapour_pressure(old_surface_temperature);
   
   double constant_1
     = (surface_water_tension*molar_mass_water*gravity_constant/gas_constant)
     - (water_latent_heat_of_vaporization*molar_mass_water/gas_constant);  // [K]
   
   double average_temperature
-    = 0.5*old_surface_temperature + 0.5*old_surface_temperature;
+    = 0.5*old_surface_temperature + 0.5*new_surface_temperature;
   double old_vapur_pressure_surface_derivative
     = -1.* Philip_1957_surface_vapour_pressure (average_temperature)
     * (constant_1/((average_temperature+273.15)*(average_temperature+273.15)));
@@ -579,8 +579,8 @@ get_convective_coefficient_Herb(/*const std::string surface_type,*/
 	=(molar_mass_water/molar_mass_air)
 	* vapour_pressure_surface/atmospheric_pressure; // (Pa/Pa)
       virtual_surface_temperature
-	=(1.+0.6*mixing_ratio_surface)*((1.0*new_surface_temperature+
-					 0.0*old_surface_temperature)+273.15); // (K)
+	=(1.+0.6*mixing_ratio_surface)*((0.5*new_surface_temperature+
+					 0.5*old_surface_temperature)+273.15); // (K)
     }
   double saturated_vapour_pressure_air
     =Clasius_Clapeyron_saturated_vapour_pressure(air_temperature);
