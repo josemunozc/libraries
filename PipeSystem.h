@@ -54,12 +54,12 @@ number_of_pipes (40),
     Both arguments in MaterialData are irrelevant since we are
     asking only for the pipe thermal conductivity
   */
-  MaterialData material_data (3,true,/*moisture content*/0.23);
+  //MaterialData material_data (3,true,/*moisture content*/0.23);
   
   pipe_wall_heat_coefficient// with k=0.4  ~192.85 (W/m2K)
     =1./((pipe_internal_radius * 
-	  log (pipe_external_radius/pipe_internal_radius))/
-	 material_data.get_pipe_thermal_conductivity());
+	  log (pipe_external_radius/pipe_internal_radius))/0.4
+	 /*material_data.get_pipe_thermal_conductivity()*/);
 }
 
 void PipeSystem::pipe_heat_flux(const std::vector<double> &new_avg_pipe_temperature,

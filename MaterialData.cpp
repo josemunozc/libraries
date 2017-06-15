@@ -9,7 +9,7 @@ MaterialData (int dim_,bool system_,double moisture_content_, bool moisture_acti
   system (system_),
   moisture_content (moisture_content_),
   moisture_active (moisture_active_),
-  pipe_thermal_conductivity (0.4)  
+  pipe_thermal_conductivity (0.4)
 {
   /*
     Define ranges for the different materials (volumes in 3d, surfaces in 2d). This
@@ -99,77 +99,80 @@ MaterialData (int dim_,bool system_,double moisture_content_, bool moisture_acti
   
   if (dim==1)
     {
-      soil_thermal_conductivity[0]   = clay_thermal_conductivity;   // soil (1.21 silty clay, assuming same value for backfill and unperturbed soil)
-      soil_specific_heat_capacity[0] = clay_specific_heat_capacity; // soil (840  silty clay, assuming same value for backfill and unperturbed soil)
-      soil_density[0]                = clay_density;                // soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
+      soil_thermal_conductivity[0]//soil (1.21 silty clay, assuming same value for backfill and unperturbed soil)
+	=clay_thermal_conductivity;
+      soil_specific_heat_capacity[0]//soil (840  silty clay, assuming same value for backfill and unperturbed soil)
+	=clay_specific_heat_capacity;
+      soil_density[0]// soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
+	=clay_density;
     }
   else if (dim==2)
     {
       /*********************************
        Thermal Conductivity in 2D (W/mK)
       **********************************/
-      soil_thermal_conductivity[0] = 1.200; // wearing course 0.85
-      soil_thermal_conductivity[1] = 1.200; // binder course 0.85
-      soil_thermal_conductivity[6] = clay_thermal_conductivity; // soil (1.21 silty clay, assuming same value for backfill and unperturbed soil)
+      soil_thermal_conductivity[0]=1.200; // wearing course 0.85
+      soil_thermal_conductivity[1]=1.200; // binder course 0.85
+      soil_thermal_conductivity[6]=clay_thermal_conductivity;// soil (1.21 silty clay, assuming same value for backfill and unperturbed soil)
       if (system)
 	{
 	  /*If the pipe arrays and insulation layer are present*/
-	  soil_thermal_conductivity[2] = 1.400; // collector pipes (concrete) 1.4
-	  soil_thermal_conductivity[3] = 1.400; // granular material type 1   1.4
-	  soil_thermal_conductivity[4] = 0.034; // insulation                 0.034
-	  soil_thermal_conductivity[5] = 0.330; // storage pipes (sand)       0.330
+	  soil_thermal_conductivity[2]=1.400;//collector pipes (concrete) 1.4
+	  soil_thermal_conductivity[3]=1.400;//granular material type 1   1.4
+	  soil_thermal_conductivity[4]=0.034;//insulation                 0.034
+	  soil_thermal_conductivity[5]=0.330;//storage pipes (sand)       0.330
 	}
       else
 	{
 	  /*If they are not present*/
-	  soil_thermal_conductivity[2] = 1.400; // concrete 1.4
-	  soil_thermal_conductivity[3] = 1.400; // concrete 1.4
-	  soil_thermal_conductivity[4] = clay_thermal_conductivity; // soil (1.210 silty clay, assuming same value for backfill and unperturbed soil)
-	  soil_thermal_conductivity[5] = clay_thermal_conductivity; // soil (1.210 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_thermal_conductivity[2]=1.400;//concrete 1.4
+	  soil_thermal_conductivity[3]=1.400;//concrete 1.4
+	  soil_thermal_conductivity[4]=clay_thermal_conductivity; // soil (1.210 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_thermal_conductivity[5]=clay_thermal_conductivity; // soil (1.210 silty clay, assuming same value for backfill and unperturbed soil)
 	}
       /***********************************
        Specific Heat Capacity in 2D (J/kgK)
       ************************************/
-      soil_specific_heat_capacity[0] =  1200; // wearing course 850
-      soil_specific_heat_capacity[1] =  1200; // binder course 850
-      soil_specific_heat_capacity[6] =  clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
+      soil_specific_heat_capacity[0]=1200;//wearing course 850
+      soil_specific_heat_capacity[1]=1200;//binder course 850
+      soil_specific_heat_capacity[6]=clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
       if (system)
 	{
 	  /*If the pipe arrays and insulation layer are present*/
-	  soil_specific_heat_capacity[2] =  840; // collector pipes (concrete)
-	  soil_specific_heat_capacity[3] =  840; // granular material type 1
-	  soil_specific_heat_capacity[4] = 1130; // insulation 1130
-	  soil_specific_heat_capacity[5] =  840; // storage pipes (sand);
+	  soil_specific_heat_capacity[2]= 840;// collector pipes (concrete)
+	  soil_specific_heat_capacity[3]= 840;// granular material type 1
+	  soil_specific_heat_capacity[4]=1130;// insulation 1130
+	  soil_specific_heat_capacity[5]= 840;// storage pipes (sand);
 	}
       else
 	{
 	  /*If they are not present*/
-	   soil_specific_heat_capacity[2] =  840; // concrete
-	   soil_specific_heat_capacity[3] =  840; // concrete
-	   soil_specific_heat_capacity[4] =  clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
-	   soil_specific_heat_capacity[5] =  clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_specific_heat_capacity[2]=840;// concrete
+	  soil_specific_heat_capacity[3]=840;// concrete
+	  soil_specific_heat_capacity[4]=clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_specific_heat_capacity[5]=clay_specific_heat_capacity; // soil (840 silty clay, assuming same value for backfill and unperturbed soil)
 	}
       /**********************
        Density in 2D (kg/m3)
       ***********************/
-      soil_density[0] = 2400; // wearing course 2400
-      soil_density[1] = 2400; // binder course  2400
-      soil_density[6] = clay_density; // soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
+      soil_density[0]=2400;//wearing course 2400
+      soil_density[1]=2400;//binder course  2400
+      soil_density[6]=clay_density;//soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
       if (system)
 	{
 	  /*If the pipe arrays and insulation layer are present*/
-	  soil_density[2] = 2100; // collector pipes (concrete) 2100
-	  soil_density[3] = 2100; // granular material type 1   2100
-	  soil_density[4] =   30; // insulation 30
-	  soil_density[5] = 2240; // storage pipes (sand)       2240
+	  soil_density[2]=2100;//collector pipes (concrete) 2100
+	  soil_density[3]=2100;//granular material type 1   2100
+	  soil_density[4]=  30;//insulation 30
+	  soil_density[5]=2240;//storage pipes (sand)       2240
 	}
       else
 	{
 	  /*If they are not present*/
-	  soil_density[2] = 2100; // concrete 2100
-	  soil_density[3] = 2100; // concrete 2100
-	  soil_density[4] = clay_density; // soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
-	  soil_density[5] = clay_density; // soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_density[2]=2100;//concrete 2100
+	  soil_density[3]=2100;//concrete 2100
+	  soil_density[4]=clay_density;//soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
+	  soil_density[5]=clay_density;//soil (1960 silty clay, assuming same value for backfill and unperturbed soil)
 	}
     }
   else if (dim==3)
