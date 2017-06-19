@@ -48,7 +48,7 @@ void PorousMaterial::init_freezing_parameters()
 {
   freezing_point       =     0.0; // [C]
   coefficient_alpha    =    -5.0; // [nondimensional?]
-  reference_temperature=     0.0; // [C]
+  reference_temperature=     123.4;//5.0; // [C]
   latent_heat_of_fusion=334000.0; // [J/K]
 }
 

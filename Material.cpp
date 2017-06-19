@@ -1,16 +1,68 @@
 #include <string>
 #include <map>
+#include <vector>
 #include <iostream>
 #include "Material.h"
 
-
 Material::Material(std::string material_name_)
 {
+  material_data["dummy_1"].push_back(1.);
+  material_data["dummy_1"].push_back(2.);
+  material_data["dummy_1"].push_back(3.);
+
+  material_data["dummy_2"].push_back(4.);
+  material_data["dummy_2"].push_back(5.);
+  material_data["dummy_2"].push_back(6.);
+
+  material_data["quartz_1"].push_back(8.79);
+  material_data["quartz_1"].push_back(2660.);
+  material_data["quartz_1"].push_back(2010.);
+
+  material_data["pvc_1"].push_back(0.22);
+  material_data["pvc_1"].push_back(1200.);
+  material_data["pvc_1"].push_back(1200.);
+
+  material_data["glass_beads"].push_back(0.8);
+  material_data["glass_beads"].push_back(2500.);
+  material_data["glass_beads"].push_back(1175.);
+
+  material_data["pvc_2"].push_back(0.16);
+  material_data["pvc_2"].push_back(1440.);
+  material_data["pvc_2"].push_back(900.);
+
+  material_data["clay_trl"].push_back(1.21);
+  material_data["clay_trl"].push_back(1960.);
+  material_data["clay_trl"].push_back(840.);
+
+  material_data["wearing_course"].push_back(1.2);
+  material_data["wearing_course"].push_back(2400.);
+  material_data["wearing_course"].push_back(1200.);
+
+  material_data["binder_course"].push_back(1.2);
+  material_data["binder_course"].push_back(2400.);
+  material_data["binder_course"].push_back(1200.);
+
+  material_data["concrete"].push_back(1.4);
+  material_data["concrete"].push_back(2100.);
+  material_data["concrete"].push_back(840.);
+
+  material_data["granular_material_1"].push_back(1.4);
+  material_data["granular_material_1"].push_back(2100.);
+  material_data["granular_material_1"].push_back(840.);
+
+  material_data["insulation_trl"].push_back(0.034);
+  material_data["insulation_trl"].push_back(30.);
+  material_data["insulation_trl"].push_back(1130.);
+
+  material_data["sand_trl"].push_back(0.33);
+  material_data["sand_trl"].push_back(2240.);
+  material_data["sand_trl"].push_back(840.);
+
   solids_thermal_conductivity=0.;
   solids_density=0.;
   solids_specific_heat_capacity=0.;
   
-  std::map<std::string,std::array<double,3> >::iterator it;
+  std::map<std::string,std::vector<double> >::iterator it;
   it = material_data.find(material_name_);
   if(it!=material_data.end())
     {
