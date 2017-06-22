@@ -31,17 +31,20 @@ PorousMaterial::PorousMaterial(double solids_thermal_conductivity_,
 
 void PorousMaterial::init_liquid_gas_and_ice_parameters()
 {
-  liquid_thermal_conductivity  =   0.57;// [W/mK]
-  liquid_density               =1000.00;// [kg/m3]
-  liquid_specific_heat_capacity=4186.00; // [J/kgK]
-  
-  gas_thermal_conductivity  =0.025; // [W/mK]
-  gas_density               =1.25 ; // [kg/m3]
-  gas_specific_heat_capacity=1.256; // [J/kgK]
+  Material material("water");
+  liquid_thermal_conductivity  =material.thermal_conductivity();// [W/mK]
+  liquid_density               =material.density();// [kg/m3]
+  liquid_specific_heat_capacity=material.specific_heat_capacity();// [J/kgK]
 
-  ice_thermal_conductivity  =   2.22; //(@  0C) [W/mK]
-  ice_density               = 920.00; //(@-30C)[kg/m3]
-  ice_specific_heat_capacity=1844.00; //(@-30C)[J/kgK]
+  material=Material("air");
+  gas_thermal_conductivity  =material.thermal_conductivity();// [W/mK]
+  gas_density               =material.density();// [kg/m3]
+  gas_specific_heat_capacity=material.specific_heat_capacity();// [J/kgK]
+
+  material=Material("ice");
+  ice_thermal_conductivity  =material.thermal_conductivity();//(@  0C) [W/mK]
+  ice_density               =material.density();//(@-30C)[kg/m3]
+  ice_specific_heat_capacity=material.specific_heat_capacity();//(@-30C)[J/kgK]
 }
 
 void PorousMaterial::init_freezing_parameters()
@@ -165,7 +168,7 @@ double PorousMaterial::degree_of_saturation_ice_derivative(const double temperat
     return 0.;
 }
 
-double PorousMaterial::volumetric_heat_capacity(const double temperature)
+double PorousMaterial::volumetric_heat_capacity(double temperature)
 {
   double Hc=
     (1.-degree_of_saturation_ice(temperature))*

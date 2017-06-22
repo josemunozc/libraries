@@ -15,7 +15,7 @@ public:
   virtual double thermal_conductivity();
   virtual double density();
   virtual double specific_heat_capacity();
-  virtual double volumetric_heat_capacity();
+  virtual double volumetric_heat_capacity(double temperature=25);
   virtual double thermal_diffusivity();
 protected:
   double solids_thermal_conductivity;

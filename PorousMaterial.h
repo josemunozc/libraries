@@ -21,7 +21,7 @@ public:
 
   virtual double thermal_conductivity();
   virtual double thermal_conductivity(const std::string relationship);
-  virtual double volumetric_heat_capacity(const double temperature);
+  virtual double volumetric_heat_capacity(double temperature);
   
   void set_liquid_properties(double liquid_thermal_conductivity_,
 			     double liquid_density_,
@@ -42,7 +42,7 @@ public:
   
 private:
   void init_liquid_gas_and_ice_parameters();
-
+  
   void init_freezing_parameters();
   
   double porosity;

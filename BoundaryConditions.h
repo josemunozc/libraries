@@ -74,8 +74,8 @@ class BoundaryConditions
 				   const bool new_estimate);
   
 private:
-  const bool   analytic;
-  const double time;
+  bool   analytic;
+  double time;
   double air_temperature;
   double solar_radiation;
   double wind_speed;
@@ -83,7 +83,7 @@ private:
   double precipitation;
   double surface_temperature;
   double surface_pressure;
-  const bool moisture_movement;
+  bool moisture_movement;
  
   double pi;
   double phi;
