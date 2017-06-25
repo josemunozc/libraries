@@ -5,16 +5,18 @@
 class BoundaryConditions
 {
  public:
-  BoundaryConditions(const bool analytic_=true,
-		     const double time_=-1000.,
-		     const double experimental_air_temperature_=-1000.,
-		     const double experimental_solar_radiation_=-1000.,
-		     const double experimental_wind_speed_=-1000.,
-		     const double experimental_relative_humidity_=-1000.,
-		     const double experimental_precipitation_=-1000.,
-		     const double experimental_surface_temperature_=-1000.,
-		     const double experimental_surface_pressure_=-75.2025,
-		     const bool moisture_movement_=false);
+  BoundaryConditions();
+  
+  BoundaryConditions(bool analytic_,
+		     double time_,
+		     double experimental_air_temperature_,
+		     double experimental_solar_radiation_,
+		     double experimental_wind_speed_,
+		     double experimental_relative_humidity_,
+		     double experimental_precipitation_,
+		     double experimental_surface_temperature_,
+		     double experimental_surface_pressure_,
+		     bool moisture_movement_);
   //------------------------------------------------------------
   double get_solar_flux        (const std::string surface_type,
 				const std::string author,

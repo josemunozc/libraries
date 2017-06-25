@@ -30,9 +30,9 @@ Material::Material(std::string material_name_)
   material_data["pvc_2"].push_back(1440.);
   material_data["pvc_2"].push_back(900.);
 
-  material_data["clay_trl"].push_back(1.21);
-  material_data["clay_trl"].push_back(1960.);
-  material_data["clay_trl"].push_back(840.);
+  material_data["clay_trl"           ].push_back(   1.2 );
+  material_data["clay_trl"           ].push_back(1960.  );
+  material_data["clay_trl"           ].push_back( 840.  );
 
   material_data["wearing_course"     ].push_back(   1.2  );
   material_data["wearing_course"     ].push_back(2400.   );
