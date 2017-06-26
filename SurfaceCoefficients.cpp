@@ -22,7 +22,7 @@ SurfaceCoefficients::SurfaceCoefficients (double surface_water_tension_,
 
   air_density = 1.2041;                        // (kg/m3)
   air_specific_heat_capacity = 1012;           // (J/kgK)
-  water_latent_heat_of_vaporization = 2.45E6;  // (J/kg) 
+  water_latent_heat_of_vaporization = 2.26E6;  // (J/kg)
 
   atmospheric_pressure              = 101325.; // (Pa)  
   
@@ -109,47 +109,45 @@ get_sky_emissivity (const std::string author,
 }
 
 double SurfaceCoefficients::
-Clasius_Clapeyron_saturated_vapour_pressure (const double temperature)
+Clasius_Clapeyron_saturated_vapour_pressure(const double temperature)
 {
   /*
-    Clausius-Clapeyron equation
-    Relates equilibrium or saturation vapor pressure and temperature to the
-    latent heat of the phase change, without requiring specific volume data
-  */
-  double saturated_vapor_partial_pressure =
-    611. * exp( (water_latent_heat_of_vaporization*molar_mass_water/gas_constant)*  // (Pa)
-		( (1./273.15) - (1./(temperature+273.15)) ) );  
-  return (saturated_vapor_partial_pressure);
+   * Clausius-Clapeyron equation
+   * Relates equilibrium or saturation vapor pressure and temperature to the
+   * latent heat of the phase change, without requiring specific volume data
+   */
+  return(611.*
+	 exp((water_latent_heat_of_vaporization*molar_mass_water/gas_constant)*//[Pa]
+	     ((1./273.15)-(1./(temperature+273.15)))));
 }
 
 double SurfaceCoefficients::
-Philip_1957_surface_vapour_pressure (double surface_temperature)
+Philip_1957_surface_vapour_pressure(const double surface_temperature)
 {
-  double vapour_pressure_saturation_surface 
-    = Clasius_Clapeyron_saturated_vapour_pressure (surface_temperature);
-  double vapour_pressure_surface =
-    (vapour_pressure_saturation_surface * 
-     exp (surface_water_tension * molar_mass_water * gravity_constant
-	  /(gas_constant * (surface_temperature + 273.15)) )); // (Pa)
+  double vapour_pressure_saturation_surface=
+    Clasius_Clapeyron_saturated_vapour_pressure(surface_temperature);
+  double vapour_pressure_surface=
+    vapour_pressure_saturation_surface*
+    exp(surface_water_tension*molar_mass_water*gravity_constant
+	/(gas_constant*(surface_temperature+273.15)));//(Pa)
   return (vapour_pressure_surface);
 }
 
 double SurfaceCoefficients::
-vapour_pressure_surface_new_estimate (const double old_surface_temperature,
-				      const double new_surface_temperature)
+vapour_pressure_surface_new_estimate(const double old_surface_temperature,
+				     const double new_surface_temperature)
 {
-  double old_vapour_pressure_surface
-    = Philip_1957_surface_vapour_pressure(old_surface_temperature);
+  double old_vapour_pressure_surface=
+    Philip_1957_surface_vapour_pressure(old_surface_temperature);
+  double constant_1=
+    (surface_water_tension*molar_mass_water*gravity_constant/gas_constant)
+    -(water_latent_heat_of_vaporization*molar_mass_water/gas_constant);//[K]
   
-  double constant_1
-    = (surface_water_tension*molar_mass_water*gravity_constant/gas_constant)
-    - (water_latent_heat_of_vaporization*molar_mass_water/gas_constant);  // [K]
-  
-  double average_temperature
-    = 0.5*old_surface_temperature + 0.5*new_surface_temperature;
-  double old_vapur_pressure_surface_derivative
-    = -1.* Philip_1957_surface_vapour_pressure (average_temperature)
-    * (constant_1/((average_temperature+273.15)*(average_temperature+273.15)));
+  double average_temperature=
+    0.5*old_surface_temperature+0.5*new_surface_temperature;
+  double old_vapur_pressure_surface_derivative=
+    -1.*Philip_1957_surface_vapour_pressure(average_temperature)
+    *(constant_1/((average_temperature+273.15)*(average_temperature+273.15)));
   
   return (old_vapour_pressure_surface
 	  + (old_vapur_pressure_surface_derivative
@@ -557,39 +555,45 @@ get_convective_coefficient_Herb(/*const std::string surface_type,*/
     Relates equilibrium or saturation vapour pressure and temperature to the
     latent heat of the phase change, without requiring specific volume data
   */
+  /*
+    the 'old_surface_temperature' passed to this function is assumed to be an
+    'anchor temperature', this is, a temperature around which we expect the 
+    surface temperature to be around.
+  */
   double vapour_pressure_surface=0.;
   double mixing_ratio_surface=0.;
   double virtual_surface_temperature=0.;
+  double surface_temperature=//[K]
+    0.5*new_surface_temperature+0.5*old_surface_temperature;
   if (new_estimate==false)
     {
-      vapour_pressure_surface
-	=Philip_1957_surface_vapour_pressure(old_surface_temperature);
-      mixing_ratio_surface
-	=(molar_mass_water/molar_mass_air)
-	* vapour_pressure_surface/atmospheric_pressure; // (Pa/Pa)
-      virtual_surface_temperature =
-	(1.+0.6*mixing_ratio_surface)*(old_surface_temperature+273.15); // (K)
+      vapour_pressure_surface=
+	Philip_1957_surface_vapour_pressure(surface_temperature);
+      mixing_ratio_surface=
+	(molar_mass_water/molar_mass_air)*
+	vapour_pressure_surface/atmospheric_pressure;//[Pa/Pa]
+      virtual_surface_temperature=
+	(1.+0.6*mixing_ratio_surface)*(surface_temperature+273.15);//[K]
     }
   else
     {
-      vapour_pressure_surface
-	=vapour_pressure_surface_new_estimate(old_surface_temperature,
-					      new_surface_temperature);
-      mixing_ratio_surface
-	=(molar_mass_water/molar_mass_air)
-	* vapour_pressure_surface/atmospheric_pressure; // (Pa/Pa)
-      virtual_surface_temperature
-	=(1.+0.6*mixing_ratio_surface)*((0.5*new_surface_temperature+
-					 0.5*old_surface_temperature)+273.15); // (K)
+      vapour_pressure_surface=
+	vapour_pressure_surface_new_estimate(surface_temperature,
+					     surface_temperature);
+      mixing_ratio_surface=
+	(molar_mass_water/molar_mass_air)
+	*vapour_pressure_surface/atmospheric_pressure;//[Pa/Pa]
+      virtual_surface_temperature=
+	(1.+0.6*mixing_ratio_surface)*(surface_temperature+273.15);//[K]
     }
-  double saturated_vapour_pressure_air
-    =Clasius_Clapeyron_saturated_vapour_pressure(air_temperature);
-  double mixing_ratio_air
-    =((relative_humidity/100.)*
+  double saturated_vapour_pressure_air=
+    Clasius_Clapeyron_saturated_vapour_pressure(air_temperature);
+  double mixing_ratio_air=
+    ((relative_humidity/100.)*
      (molar_mass_water/molar_mass_air)
-     *saturated_vapour_pressure_air/atmospheric_pressure);     // (Pa/Pa)
-  double virtual_air_temperature
-    =(1.+0.6*mixing_ratio_air)*(air_temperature+273.15); // (K)
+     *saturated_vapour_pressure_air/atmospheric_pressure);//[Pa/Pa]
+  double virtual_air_temperature=
+    (1.+0.6*mixing_ratio_air)*(air_temperature+273.15);//[K]
   /*
     Ryan et al. equation for flux evaporation includes a term for natural convection.
     This term is proportional to the difference in virtual temperatures between the
@@ -644,40 +648,39 @@ get_evaporative_coefficient_Herb(/*const std::string surface_type,*/
 }
 
 double SurfaceCoefficients::
-get_evaporative_flux_Herb(/*const std::string surface_type,*/
-			  const double air_temperature,     // (C)
-			  const double relative_humidity,   // (%)
-			  const double wind_speed,          // (m/s)
-			  double old_surface_temperature, // (C)
-			  double new_surface_temperature, // (C)
-			  const bool new_estimate) // (C)
+get_evaporative_flux_Herb(const double air_temperature,  // (C)
+			  const double relative_humidity,// (%)
+			  const double wind_speed,       // (m/s)
+			  double old_surface_temperature,// (C)
+			  double new_surface_temperature,// (C)
+			  const bool new_estimate)// (C)
 {
-  // if (moisture_movement==false)
-  //   {
-  //     old_surface_temperature=10.9;
-  //     new_surface_temperature=10.9;
-  //   }
-
+  /*
+    the 'old_surface_temperature' passed to this function is assumed to be an
+    'anchor temperature', this is, a temperature around which we expect the 
+    surface temperature to be around.
+  */
+  double surface_temperature=//[K]
+    0.5*new_surface_temperature+0.5*old_surface_temperature;
   double vapour_pressure_surface=0.;
   if (new_estimate==false)
-    vapour_pressure_surface
-      =Philip_1957_surface_vapour_pressure(old_surface_temperature);
+    vapour_pressure_surface=
+      Philip_1957_surface_vapour_pressure(surface_temperature);
   
   else
-    vapour_pressure_surface
-      =vapour_pressure_surface_new_estimate(old_surface_temperature,
-					    new_surface_temperature);
-    
-  double vapour_pressure_air
-    =(relative_humidity/100.)
-    * Clasius_Clapeyron_saturated_vapour_pressure(air_temperature) ; // (Pa)
+    vapour_pressure_surface=
+      vapour_pressure_surface_new_estimate(surface_temperature,
+					    surface_temperature);
+  double vapour_pressure_air=
+    (relative_humidity/100.)
+    *Clasius_Clapeyron_saturated_vapour_pressure(air_temperature) ;//[Pa]
   
   return(get_evaporative_coefficient_Herb(/*surface_type,*/air_temperature,
 					  relative_humidity,wind_speed,
 					  old_surface_temperature,
 					  new_surface_temperature,
 					  new_estimate)
-	  *(vapour_pressure_air-vapour_pressure_surface)); // (W/m^2)
+	 *(vapour_pressure_air-vapour_pressure_surface));//[W/m^2]
 }
 
 double SurfaceCoefficients::
@@ -762,8 +765,7 @@ get_infrared_outbound_coefficient_Best(const std::string surface_type)
 }
 
 double SurfaceCoefficients::
-get_convective_coefficient_Best(/*const std::string surface_type,*/
-				const double air_temperature,     // (C)
+get_convective_coefficient_Best(const double air_temperature,     // (C)
 				const double relative_humidity,   // (%)
 				const double wind_speed,          // (m/s)
 				const double old_surface_temperature, // (C)
@@ -776,7 +778,7 @@ get_convective_coefficient_Best(/*const std::string surface_type,*/
     necessity to repeat code here, just call Herb's convective
     coefficient function
   */
-  return (get_convective_coefficient_Herb(/*surface_type,*/air_temperature,
+  return (get_convective_coefficient_Herb(air_temperature,
 					  relative_humidity,wind_speed,
 					  old_surface_temperature,
 					  new_surface_temperature,
@@ -784,8 +786,7 @@ get_convective_coefficient_Best(/*const std::string surface_type,*/
 }
 
 double SurfaceCoefficients::
-get_evaporative_coefficient_Best(/*const std::string surface_type,*/
-				 const double air_temperature,     // (C)
+get_evaporative_coefficient_Best(const double air_temperature,     // (C)
 				 const double relative_humidity,   // (%)
 				 const double wind_speed,          // (m/s)
 				 const double old_surface_temperature, // (C)
@@ -798,7 +799,7 @@ get_evaporative_coefficient_Best(/*const std::string surface_type,*/
     necessity to repeat code here, just call Herb's evaporative
     coefficient function
   */ 
-  return (get_evaporative_coefficient_Herb(/*surface_type,*/air_temperature,
+  return (get_evaporative_coefficient_Herb(air_temperature,
 					   relative_humidity,wind_speed,
 					   old_surface_temperature,
 					   new_surface_temperature,
@@ -806,50 +807,48 @@ get_evaporative_coefficient_Best(/*const std::string surface_type,*/
 }
 
 double SurfaceCoefficients::
-get_evaporative_flux_Best(/*const std::string surface_type,*/
-			  const double air_temperature,     // (C)
+get_evaporative_flux_Best(const double air_temperature,     // (C)
 			  const double relative_humidity,   // (%)
 			  const double wind_speed,          // (m/s)
 			  double old_surface_temperature, // (C)
 			  double new_surface_temperature, // (C)
 			  const bool new_estimate) // (C)
 {
-  // if (moisture_movement==false)
-  //   {
-  //     old_surface_temperature=10.9;
-  //     new_surface_temperature=10.9;
-  //   }
-
+  /*
+    the 'old_surface_temperature' passed to this function is assumed to be an
+    'anchor temperature', this is, a temperature around which we expect the 
+    surface temperature to be around.
+  */
+  double surface_temperature=//[K]
+    0.5*new_surface_temperature+0.5*old_surface_temperature;
   double vapour_pressure_surface=0.;
   if (new_estimate==false)
-    vapour_pressure_surface
-      =Philip_1957_surface_vapour_pressure(old_surface_temperature);
+    vapour_pressure_surface=
+      Philip_1957_surface_vapour_pressure(surface_temperature);
   else
-    vapour_pressure_surface
-      =vapour_pressure_surface_new_estimate(old_surface_temperature,
-					     new_surface_temperature);
-  double vapour_pressure_air
-    =(relative_humidity/100.)
-    *Clasius_Clapeyron_saturated_vapour_pressure(air_temperature) ; // (Pa)
+    vapour_pressure_surface=
+      vapour_pressure_surface_new_estimate(surface_temperature,
+					   surface_temperature);
+  double vapour_pressure_air=
+    (relative_humidity/100.)
+    *Clasius_Clapeyron_saturated_vapour_pressure(air_temperature);//[Pa]
   
-  return(get_evaporative_coefficient_Best(/*surface_type,*/air_temperature,
+  return(get_evaporative_coefficient_Best(air_temperature,
 					  relative_humidity,wind_speed,
 					  old_surface_temperature,
 					  new_surface_temperature,
 					  new_estimate)
-	  *(vapour_pressure_air-vapour_pressure_surface)); // (W/m^2)
+	  *(vapour_pressure_air-vapour_pressure_surface));//[W/m^2]
 }
 
 double SurfaceCoefficients::
-get_convective_coefficient_canopy_Best(/*const std::string surface_type,*/
-				       const double wind_speed)        // (m/s)
+get_convective_coefficient_canopy_Best(const double wind_speed)//(m/s)
 { 
   return (0.01*(wind_speed+0.3)*air_density*air_specific_heat_capacity); // (W/m^2K)
 }
 
 double SurfaceCoefficients::
-get_evaporative_flux_canopy_Best(/*const std::string surface_type,*/
-				 const double air_temperature,     // (C)
+get_evaporative_flux_canopy_Best(const double air_temperature,     // (C)
 				 const double relative_humidity,   // (%)
 				 const double wind_speed,          // (m/s)
 				 const double solar_radiation,     // (W/m2)
@@ -894,8 +893,7 @@ get_evaporative_flux_canopy_Best(/*const std::string surface_type,*/
 }
 
 double SurfaceCoefficients::
-get_evaporative_mass_flux_Best(/*const std::string surface_type,*/
-			       const double air_temperature,     // (C)
+get_evaporative_mass_flux_Best(const double air_temperature,     // (C)
 			       const double relative_humidity,   // (%)
 			       const double wind_speed,          // (m/s)
 			       const double old_surface_temperature, // (C)

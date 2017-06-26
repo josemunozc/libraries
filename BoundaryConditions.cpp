@@ -313,11 +313,10 @@ get_evaporative_flux(const std::string surface_type,
 					   precipitation,
 					   moisture_movement);
   double evaporative_flux=0.;
- 
   if (author=="Jansson")
     {
-      evaporative_flux
-	=surface_coefficients
+      evaporative_flux=
+	surface_coefficients
 	.get_evaporative_flux_Jansson(surface_type,
 				      air_temperature,
 				      relative_humidity,
@@ -329,37 +328,34 @@ get_evaporative_flux(const std::string surface_type,
     }
   else if (author=="Herb")
     {
-      evaporative_flux = 
+      evaporative_flux=
 	surface_coefficients
-	.get_evaporative_flux_Herb(/*surface_type,*/
-				   air_temperature,
+	.get_evaporative_flux_Herb(air_temperature,
 				   relative_humidity,
 				   wind_speed,
 				   old_surface_temperature,
 				   new_surface_temperature,
-				   new_estimate); // (W/m2)
-      return (evaporative_flux); // (W/m2)
+				   new_estimate);//(W/m2)
+      return (evaporative_flux);//(W/m2)
     }
   else if (author=="Best")
     {
-      if ( (canopy_density<0.) ||
-	   (canopy_density>1.))
+      if ((canopy_density<0.) || (canopy_density>1.))
 	{
 	  std::cout << "Error: canopy density out of range." << std::endl
 		    << "Error in get_evaporative_flux."      << std::endl;
 	  throw 100;
 	}
       double level_of_soil_evaporation=0.;
-      evaporative_flux
-	=surface_coefficients
-	.get_evaporative_flux_Best(/*surface_type,*/
-				   air_temperature,
+      evaporative_flux=
+	surface_coefficients
+	.get_evaporative_flux_Best(air_temperature,
 				   relative_humidity,
 				   wind_speed,
 				   old_surface_temperature,
 				   new_surface_temperature,
-				   new_estimate); // (W/m2K)
-      return((1.-level_of_soil_evaporation*canopy_density)*evaporative_flux); // (W/m2)
+				   new_estimate);//(W/m2K)
+      return((1.-level_of_soil_evaporation*canopy_density)*evaporative_flux);//(W/m2)
     }
   else
     {
@@ -370,8 +366,7 @@ get_evaporative_flux(const std::string surface_type,
 }
 
 double BoundaryConditions::
-get_canopy_temperature(/*const std::string surface_type,*/
-		       const std::string author,
+get_canopy_temperature(const std::string author,
 		       const double canopy_density)
 {
   std::string dummy=author;
@@ -483,12 +478,11 @@ get_inbound_heat_flux (const std::string surface_type,
     Add up inbound solar radiation. Taking care of reducing it by the
     provided shading factor
   */
-  print_solar_radiation
-    =(1.-shading_factor) *
+  print_solar_radiation=
+    (1.-shading_factor)*
     get_solar_flux (surface_type,
 		    author,
 		    canopy_density);
-  
   inbound_heat_flux+=print_solar_radiation;
   /*
     Add up inbound evaporative heat flux (currenlty constant)
@@ -498,27 +492,27 @@ get_inbound_heat_flux (const std::string surface_type,
   */
   if (active_evaporation)
     {
-      print_inbound_evaporative
-	=get_evaporative_flux(surface_type,
-			      author,
-			      canopy_density,
-			      old_surface_temperature,
-			      new_surface_temperature,
-			      new_estimate);
+      print_inbound_evaporative=
+	get_evaporative_flux(surface_type,
+			     author,
+			     canopy_density,
+			     old_surface_temperature,
+			     new_surface_temperature,
+			     new_estimate);
       inbound_heat_flux
 	+=print_inbound_evaporative;
     }
   /*
     Add up inbound convective heat flux
   */
-  print_inbound_convective
-    =get_convective_flux(surface_type,
-			 author,
-			 "inbound",
+  print_inbound_convective=
+    get_convective_flux(surface_type,
+			author,
+			"inbound",
 			 canopy_density,
-			 old_surface_temperature,
-			 new_surface_temperature,
-			 new_estimate);
+			old_surface_temperature,
+			new_surface_temperature,
+			new_estimate);
   inbound_heat_flux
     +=print_inbound_convective;
   /*
@@ -631,16 +625,16 @@ get_inbound_heat_flux (const std::string surface_type,
     formulation for 'Best' requires adding an extra term from the canopy
     cover):
   */
-  print_inbound_infrared
-    =get_infrared_flux(surface_type,
-		       author,
-		       "inbound",
-		       old_surface_temperature,
-		       canopy_temperature,
-		       canopy_density);
+  print_inbound_infrared=
+    get_infrared_flux(surface_type,
+		      author,
+		      "inbound",
+		      old_surface_temperature,
+		      canopy_temperature,
+		      canopy_density);
   inbound_heat_flux
     +=print_inbound_infrared;
-
+  
   return(inbound_heat_flux);
 }
 
@@ -704,17 +698,16 @@ get_outbound_coefficient (const std::string surface_type,
 	*surface_coefficients
 	.get_infrared_outbound_coefficient_Jansson(surface_type);
     }
-  else if (author == "Herb")
+  else if (author=="Herb")
     {
-      print_outbound_convection_coefficient
-	= surface_coefficients
-	.get_convective_coefficient_Herb (/*surface_type,*/
-					  air_temperature,
-					  relative_humidity,
-					  wind_speed,
-					  old_surface_temperature,
-					  new_surface_temperature,
-					  new_estimate);/* (W/m2C) */;
+      print_outbound_convection_coefficient=
+	surface_coefficients
+	.get_convective_coefficient_Herb(air_temperature,
+					 relative_humidity,
+					 wind_speed,
+					 old_surface_temperature,
+					 new_surface_temperature,
+					 new_estimate);//[(W/m2C)
       
       print_outbound_infrared_coefficient
 	= 4.*pow(((sky_temperature+(old_surface_temperature+273.15))/2.),3)
@@ -728,13 +721,12 @@ get_outbound_coefficient (const std::string surface_type,
       print_outbound_convection_coefficient
 	=(1.-level_of_soil_evaporation*canopy_density) *
 	surface_coefficients
-	.get_convective_coefficient_Best (/*surface_type,*/
-					  air_temperature,
+	.get_convective_coefficient_Best (air_temperature,
 					  relative_humidity,
 					  wind_speed,
 					  old_surface_temperature,
 					  new_surface_temperature,
-					  new_estimate);/* (W/m2C) */
+					  new_estimate);//[W/m2C]
       print_outbound_infrared_coefficient
 	=/*(1.-canopy_density) */
 	4.*pow(old_surface_temperature+273.15,3)
@@ -756,21 +748,21 @@ get_outbound_coefficient (const std::string surface_type,
 	  =surface_coefficients
 	  .get_evaporative_coefficient_Jansson(surface_type,
 					       wind_speed);
-      else if (author == "Herb")
+      else if (author=="Herb")
 	print_outbound_evaporative_coefficient
 	  =surface_coefficients
-	  .get_evaporative_coefficient_Herb(/*surface_type,*/air_temperature,
+	  .get_evaporative_coefficient_Herb(air_temperature,
 					    relative_humidity,wind_speed,
 					    old_surface_temperature,
 					    new_surface_temperature,
 					    new_estimate);
-      else if (author == "Best")
+      else if (author=="Best")
 	{
 	  double level_of_soil_evaporation=0.0;
-	  print_outbound_evaporative_coefficient
-	    = (1.-level_of_soil_evaporation*canopy_density) *
+	  print_outbound_evaporative_coefficient=
+	    (1.-level_of_soil_evaporation*canopy_density)*
 	    surface_coefficients
-	    .get_evaporative_coefficient_Best(/*surface_type,*/air_temperature,
+	    .get_evaporative_coefficient_Best(air_temperature,
 					      relative_humidity,wind_speed,
 					      old_surface_temperature,
 					      new_surface_temperature,
@@ -784,12 +776,12 @@ get_outbound_coefficient (const std::string surface_type,
 	}
     }
   
-  outbound_coefficient += 
+  outbound_coefficient+= 
     print_outbound_convection_coefficient;
-  outbound_coefficient += 
+  outbound_coefficient+= 
     print_outbound_infrared_coefficient;
-  // outbound_coefficient +=
-  //   print_outbound_evaporative_coefficient;
+  outbound_coefficient+=
+    print_outbound_evaporative_coefficient;
   return (outbound_coefficient);
 }
 
