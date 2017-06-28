@@ -35,6 +35,8 @@ SurfaceCoefficients::SurfaceCoefficients (double surface_water_tension_,
   absortivity_soil_Best = 0.85;            // Herb 2008, (dimensionless)
   absortivity_road_Best = 0.88;            // Herb 2008, (dimensionless)
 
+  absortivity_snow = 0.15;                 // Garrat 1994, fresh snow 0.05 - 0.35
+
   emissivity_soil_Jansson = 0.97;          // Garrat 1994,  (dimensionless)
   emissivity_road_Jansson = 1.00;          // Jansson 2006, (dimensionless)
 
@@ -44,6 +46,8 @@ SurfaceCoefficients::SurfaceCoefficients (double surface_water_tension_,
   emissivity_soil_Best = 0.95;             // Herb 2008, (dimensionless)
   emissivity_road_Best = 0.94;             // Herb 2008, (dimensionless)
   emissivity_canopy_Best = 0.95;           // Herb 2008, (dimensionless)
+
+  emissivity_snow=0.95;                    // Garrat 1994
   
   a_Jansson = 0.540;                       // Monteith 1961, Brunt 1932, (dimensionless)
   b_Jansson = 0.065;                       // Monteith 1961, Brunt 1932, (1/hPa)
@@ -71,31 +75,29 @@ get_sky_emissivity (const std::string author,
 		    const double air_temperature,
 		    const double relative_humidity)
 {
-  double vapour_pressure_air
-    = (relative_humidity/100.)
-    * Clasius_Clapeyron_saturated_vapour_pressure (air_temperature);
+  double vapour_pressure_air=
+    (relative_humidity/100.)
+    *Clasius_Clapeyron_saturated_vapour_pressure(air_temperature);
+  double sky_emissivity=0;
   
-  double sky_emissivity = 0;
-  
-  if (author=="Jansson")
+  if (author=="Jansson")//Brunt 1932 (vapor pressure must be in hPa)
     {
-      // Brunt 1932 (vapor pressure must be in hPa)
-      sky_emissivity
-	= a_Jansson +
+      sky_emissivity=
+	a_Jansson +
 	b_Jansson*pow((vapour_pressure_air/100.),0.5); 
     }
   else if (author=="Herb" ||
 	   author=="Best")
     {
-      double coefficient_cloud_cover = .5;
+      double coefficient_cloud_cover=0.5;
       /*
 	Edinger 1956? Apparently the vapor pressure 
 	must be in hPa (requires confirmation, I
 	haven't been able to locate the reference.
 	It is cited in Herb et al 2008.
       */
-      sky_emissivity
-	= coefficient_cloud_cover
+      sky_emissivity=
+	coefficient_cloud_cover
 	+ 0.67*(1-coefficient_cloud_cover)*
 	pow(vapour_pressure_air/100.,0.08); 
     }
@@ -473,6 +475,8 @@ get_absortivity_Herb(const std::string surface)
     coefficient=absortivity_road_Herb;
   else if (surface=="soil")
     coefficient=absortivity_soil_Herb;
+  else if (surface=="snow")
+    coefficient=absortivity_snow;
   else
     {
       std::cout << "Error: surface not implemented." << std::endl
@@ -513,13 +517,15 @@ get_infrared_outbound_coefficient_Herb(const std::string surface_type)
     surface_emissivity=emissivity_road_Herb;
   else if (surface_type=="soil")
     surface_emissivity=emissivity_soil_Herb;
+  else if (surface_type=="snow")
+    surface_emissivity=emissivity_snow;
   else
     {
       std::cout << "Error: surface not implemented."                  << std::endl
 		<< "Error in get_infrared_outbound_coefficient_Herb." << std::endl;
       throw 3;
     }
-  return (steffan_boltzmann*surface_emissivity); // (W/m2K4)
+  return (steffan_boltzmann*surface_emissivity);//[W/m2K4]
 }
 
 double SurfaceCoefficients::

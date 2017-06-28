@@ -193,6 +193,8 @@ private:
   double absortivity_soil_Best;
   double absortivity_road_Best;
 
+  double absortivity_snow;
+
   double emissivity_soil_Jansson;
   double emissivity_road_Jansson;
   
@@ -203,6 +205,7 @@ private:
   double emissivity_road_Best;
   double emissivity_canopy_Best;
 
+  double emissivity_snow;
   
   double a_Jansson;
   double b_Jansson;

@@ -89,8 +89,7 @@ get_solar_flux(const std::string surface_type,
     return(solar_radiation*surface_coefficients.get_absortivity_Jansson(surface_type));//(W/m2) 
   else if (author=="Best")
     {
-      if ((canopy_density<0.)||
-	  (canopy_density>1.))
+      if ((canopy_density<0.)||(canopy_density>1.))
 	{
 	  std::cout << "Error: canopy density out of range" << std::endl
 		    << "error in get_solar_flux"      << std::endl;
@@ -111,29 +110,27 @@ double BoundaryConditions::
 get_infrared_flux(const std::string surface_type,
 		  const std::string author,
 		  const std::string direction,
-		  const double old_surface_temperature, // (C)
-		  const double canopy_temperature,      // (C)
+		  const double surface_temperature,//[C]
+		  const double canopy_temperature, //[C]
 		  const double canopy_density)
 {
-  if ((old_surface_temperature<-20.) ||
-      (old_surface_temperature> 80.))
+  if ((surface_temperature<-20.)||(surface_temperature> 80.))
     {
       std::cout << "Warning: out of range.\n"
 		<< "Warning in get_infrared_flux.\n"
 		<< "Author: "              << author << std::endl
-		<< "Surface temperature: " << old_surface_temperature << std::endl
+		<< "Surface temperature: " << surface_temperature << std::endl
 		<< "Canopy temperature : " << canopy_temperature << std::endl
 		<< "Canopy density     : " << canopy_density << std::endl;
       //throw 100;
     }
-
   SurfaceCoefficients surface_coefficients(surface_pressure,
 					   precipitation,
 					   moisture_movement);
   double outbound_coefficient=0.;
   double inbound_flux=0.;
   double outbound_flux=0.;
- 
+  
   double sky_emissivity=
     surface_coefficients
     .get_sky_emissivity(author,
@@ -146,13 +143,14 @@ get_infrared_flux(const std::string surface_type,
     {
       outbound_coefficient=
       	surface_coefficients
-      	.get_infrared_outbound_coefficient_Herb(surface_type);//(W/m2K)
+      	.get_infrared_outbound_coefficient_Herb(surface_type);//[W/m2K]
       inbound_flux=
-	4.*outbound_coefficient*pow(((sky_temperature+(old_surface_temperature+273.15))/2.),3)
+	4.*outbound_coefficient*pow(((sky_temperature+(surface_temperature+273.15))/2.),3)
 	*(pow(sky_emissivity,0.25)*air_temperature
 	  +273.15*(pow(sky_emissivity,0.25)-1.));
       outbound_flux=
-	4.*outbound_coefficient*pow(((sky_temperature+(old_surface_temperature+273.15))/2.),3)*old_surface_temperature;
+	4.*outbound_coefficient*
+	pow(((sky_temperature+(surface_temperature+273.15))/2.),3)*surface_temperature;
     }
   else if (author=="Jansson")
     {
@@ -160,11 +158,11 @@ get_infrared_flux(const std::string surface_type,
 	surface_coefficients
 	.get_infrared_outbound_coefficient_Jansson(surface_type); // (W/m2K)      
       inbound_flux=
-	4.*outbound_coefficient*pow(((sky_temperature+(old_surface_temperature+273.15))/2.),3)
+	4.*outbound_coefficient*pow(((sky_temperature+(surface_temperature+273.15))/2.),3)
 	*(pow(sky_emissivity,0.25)*air_temperature
 	  +273.15*(pow(sky_emissivity,0.25)-1.));
       outbound_flux=
-	4.*outbound_coefficient*pow(((sky_temperature+(old_surface_temperature+273.15))/2.),3)*old_surface_temperature;
+	4.*outbound_coefficient*pow(((sky_temperature+(surface_temperature+273.15))/2.),3)*surface_temperature;
     }
   else if (author=="Best")
     {
@@ -190,11 +188,11 @@ get_infrared_flux(const std::string surface_type,
       
       inbound_flux=
 	(1.-canopy_density)*outbound_coefficient*sky_emissivity*pow(air_temperature+273.15,4)
-	+3.*outbound_coefficient*pow(old_surface_temperature+273.15,4)
-	-4.*outbound_coefficient*pow(old_surface_temperature+273.15,3)*273.15
+	+3.*outbound_coefficient*pow(surface_temperature+273.15,4)
+	-4.*outbound_coefficient*pow(surface_temperature+273.15,3)*273.15
 	+canopy_density*outbound_coefficient_canopy*pow((canopy_temperature+273.15),4);
       outbound_flux=
-	4.*outbound_coefficient*pow(old_surface_temperature+273.15,3)*surface_temperature;
+	4.*outbound_coefficient*pow(surface_temperature+273.15,3)*surface_temperature;
     }
   else
     {
@@ -233,15 +231,14 @@ double BoundaryConditions::get_convective_flux(const std::string surface_type,
   double convective_coefficient=0.;
   
   if (author=="Jansson")
-    convective_coefficient=//(W/m2K)
+    convective_coefficient=//[W/m2K]
       surface_coefficients
       .get_convective_coefficient_Jansson(surface_type,
 					  wind_speed);
   else if (author=="Herb")
-    convective_coefficient//(W/m2K)
-      =surface_coefficients
-      .get_convective_coefficient_Herb(/*surface_type,*/
-				       air_temperature,
+    convective_coefficient=//[W/m2K]
+      surface_coefficients
+      .get_convective_coefficient_Herb(air_temperature,
 				       relative_humidity,
 				       wind_speed,
 				       old_surface_temperature,
@@ -249,18 +246,16 @@ double BoundaryConditions::get_convective_flux(const std::string surface_type,
 				       new_estimate);
   else if (author=="Best")
     {
-      if ((canopy_density<0.) ||
-	  (canopy_density>1.))
+      if ((canopy_density<0.)||(canopy_density>1.))
 	{
 	  std::cout << "Error: canopy density out of range.\n"
 		    << "Error in get_inbound_convective_flux.\n";
 	  throw 100;
 	}
       double level_of_soil_evaporation=0.0;
-      convective_coefficient=//(W/m2K)
+      convective_coefficient=//[W/m2K]
 	surface_coefficients
-	.get_convective_coefficient_Best(/*surface_type,*/
-					 air_temperature,
+	.get_convective_coefficient_Best(air_temperature,
 					 relative_humidity,
 					 wind_speed,
 					 old_surface_temperature,
@@ -323,8 +318,8 @@ get_evaporative_flux(const std::string surface_type,
 				      wind_speed,
 				      air_temperature,//old_surface_temperature,
 				      air_temperature,//new_surface_temperature,
-				      new_estimate); // (W/m2K)
-      return(evaporative_flux); // (W/m2)
+				      new_estimate);
+      return(evaporative_flux);//[W/m2]
     }
   else if (author=="Herb")
     {
@@ -335,8 +330,8 @@ get_evaporative_flux(const std::string surface_type,
 				   wind_speed,
 				   old_surface_temperature,
 				   new_surface_temperature,
-				   new_estimate);//(W/m2)
-      return (evaporative_flux);//(W/m2)
+				   new_estimate);
+      return (evaporative_flux);//[W/m2]
     }
   else if (author=="Best")
     {
@@ -470,14 +465,15 @@ get_inbound_heat_flux (const std::string surface_type,
   print_inbound_evaporative=0.;
   
   bool active_evaporation=true;
-  if (precipitation<=0 && surface_type=="road")
+  if ((precipitation<=0 && surface_type=="road")||
+      surface_type=="snow")
     active_evaporation=false;
-
+  
   double inbound_heat_flux=0.;
   /*
-    Add up inbound solar radiation. Taking care of reducing it by the
-    provided shading factor
-  */
+   * Add up inbound solar radiation. Taking care of reducing it by the
+   * provided shading factor
+   */
   print_solar_radiation=
     (1.-shading_factor)*
     get_solar_flux (surface_type,
@@ -485,11 +481,11 @@ get_inbound_heat_flux (const std::string surface_type,
 		    canopy_density);
   inbound_heat_flux+=print_solar_radiation;
   /*
-    Add up inbound evaporative heat flux (currenlty constant)
-    Two options implemented: linear and exponential (standard)
-    linear option is meant to be used to estimate only the 
-    evaporative flux in the new timestep, not the previous
-  */
+   * Add up inbound evaporative heat flux (currenlty constant)
+   * Two options implemented: linear and exponential (standard)
+   * linear option is meant to be used to estimate only the 
+   * evaporative flux in the new timestep, not the previous
+   */
   if (active_evaporation)
     {
       print_inbound_evaporative=
@@ -503,8 +499,8 @@ get_inbound_heat_flux (const std::string surface_type,
 	+=print_inbound_evaporative;
     }
   /*
-    Add up inbound convective heat flux
-  */
+   * Add up inbound convective heat flux
+   */
   print_inbound_convective=
     get_convective_flux(surface_type,
 			author,
@@ -516,18 +512,18 @@ get_inbound_heat_flux (const std::string surface_type,
   inbound_heat_flux
     +=print_inbound_convective;
   /*
-    Add up inbound infrared heat flux.
-
-    The overall idea is to get an inbound heat flux to be applied
-    in the construction of the right hand side of the system and
-    to obtain an outbound coefficient to be used in the construction
-    of the system matrix (laplace matrix).
-
-    The original infrared heat transfer equation is:
-    
-    Q = surface_emissivity*steffan_boltzmann*
-    (sky_temperature_k^4 - surface_temperature_k^4) ------ (1)
-    
+   * Add up inbound infrared heat flux.
+   *
+   * The overall idea is to get an inbound heat flux to be applied
+   * in the construction of the right hand side of the system and
+   * to obtain an outbound coefficient to be used in the construction
+   * of the system matrix (laplace matrix).
+   * 
+   * The original infrared heat transfer equation is:
+   *
+   * Q = surface_emissivity*steffan_boltzmann*
+   * (sky_temperature_k^4 - surface_temperature_k^4) ------ (1)
+   *
     where the subindex '_k' indicates absolute temperature.
     The sky can be considered as a blackbody at some equivalent
     sky_temperature that is related to the air temperature throug 
@@ -668,9 +664,10 @@ get_outbound_coefficient (const std::string surface_type,
   print_outbound_convection_coefficient  = 0.;
   print_outbound_infrared_coefficient    = 0.;
   print_outbound_evaporative_coefficient = 0.;
-
+  
   bool active_evaporation=true;
-  if (precipitation<=0 && surface_type=="road")
+  if ((precipitation<=0 && surface_type=="road")||
+      surface_type=="snow")
     active_evaporation=false;
 
   double outbound_coefficient=0.;
