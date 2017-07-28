@@ -49,9 +49,9 @@ void PorousMaterial::init_liquid_gas_and_ice_parameters()
 
 void PorousMaterial::init_freezing_parameters()
 {
-  freezing_point       =     0.0; // [C]
-  coefficient_alpha    =    -5.0; // [nondimensional?]
-  reference_temperature=     123.4;//5.0; // [C]
+  freezing_point       =   273.15; // [K]
+  coefficient_alpha    =   -10.0; // [nondimensional?]
+  reference_temperature=   293.0; // [K] 123.4(C);//
   latent_heat_of_fusion=334000.0; // [J/K]
 }
 
@@ -154,16 +154,16 @@ double PorousMaterial::thermal_conductivity(const std::string relationship)
 
 double PorousMaterial::degree_of_saturation_ice(const double temperature)
 {
-  if (temperature<=freezing_point)
-    return 1.-pow(1.-(temperature-freezing_point),coefficient_alpha);
+  if (temperature+273.15<=freezing_point)
+    return 1.-pow(1.-(temperature+273.15-freezing_point),coefficient_alpha);
   else
     return 0.;
 }
 
 double PorousMaterial::degree_of_saturation_ice_derivative(const double temperature)
 {
-  if (temperature<=freezing_point)
-    return coefficient_alpha*pow(1.-(temperature-freezing_point),coefficient_alpha-1.);
+  if (temperature+273.15<=freezing_point)
+    return coefficient_alpha*pow(1.-(temperature+273.15-freezing_point),coefficient_alpha-1.);
   else
     return 0.;
 }
@@ -178,7 +178,7 @@ double PorousMaterial::volumetric_heat_capacity(double temperature)
     +porosity*degree_of_saturation*degree_of_saturation_ice(temperature)*
     ice_specific_heat_capacity*ice_density;
   double a=
-    (temperature-reference_temperature)*
+    (temperature+273.15-reference_temperature)*
     (degree_of_saturation*ice_density*ice_specific_heat_capacity
      -degree_of_saturation*liquid_density*liquid_specific_heat_capacity);
   double b=
@@ -195,7 +195,7 @@ double PorousMaterial::thermal_energy(const double temperature)
     +solids_specific_heat_capacity*solids_density*(1.-porosity)
     +porosity*degree_of_saturation*degree_of_saturation_ice(temperature)*
     ice_specific_heat_capacity*ice_density;
-  return (Hc*(temperature-reference_temperature)
+  return (Hc*(temperature+273.15-reference_temperature)
 	  -latent_heat_of_fusion*porosity*degree_of_saturation*
 	  degree_of_saturation_ice(temperature)*ice_density);
 }
