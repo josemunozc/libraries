@@ -1,4 +1,4 @@
-#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+//#define PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
 class ConvectiveCoefficient
 {
  public:
@@ -262,6 +262,7 @@ void ConvectiveCoefficient::ethylene_glycol_density( ){
 void ConvectiveCoefficient::nondimensional_numbers( ){
   //reynolds = rho_eg*volumetric_flow*(pipe_internal_diameter)/
   //(1000*mu_eg*numbers::PI*pow(pipe_internal_diameter/2,2));
+  const double  PI=3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
   reynolds = rho_eg*volumetric_flow*(pipe_internal_diameter)/
       (1000*mu_eg*PI*pow(pipe_internal_diameter/2,2));
   prandtl  = mu_eg * Cp_eg / k_eg;
